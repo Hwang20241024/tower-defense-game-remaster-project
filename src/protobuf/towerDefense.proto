@@ -1,0 +1,209 @@
+syntax = "proto3";
+
+package towerDefense;
+
+/* 
+  실패 코드
+*/
+enum GlobalFailCode {
+    NONE = 0;
+    UNKNOWN_ERROR = 1;
+    INVALID_REQUEST = 2;
+    AUTHENTICATION_FAILED = 3;
+}
+
+/* 
+  게임 데이터 명세
+*/
+message Position {
+  float x = 1;
+  float y = 2;
+}
+
+message BaseData {
+  int32 hp = 1;
+  int32 maxHp = 2;
+}
+
+message TowerData {
+  int32 towerId = 1;
+  float x = 2;
+  float y = 3;
+}
+
+message MonsterData {
+  int32 monsterId = 1;
+  int32 monsterNumber = 2;
+  int32 level = 3;
+}
+
+message InitialGameState {
+  int32 baseHp = 1;
+  int32 towerCost = 2;
+  int32 initialGold = 3;
+  int32 monsterSpawnInterval = 4;
+}
+
+message GameState {
+  int32 gold = 1;
+  BaseData base = 2;
+  int32 highScore = 3;
+  repeated TowerData towers = 4;
+  repeated MonsterData monsters = 5;
+  int32 monsterLevel = 6;
+  int32 score = 7;
+  repeated Position monsterPath = 8;
+  Position basePosition = 9;
+}
+
+/* 
+  패킷 명세
+*/
+message C2SRegisterRequest {
+    string id = 1;
+    string password = 2;
+    string email = 3;
+}
+
+message S2CRegisterResponse {
+    bool success = 1;
+    string message = 2;
+    GlobalFailCode failCode = 3;
+}
+
+message C2SLoginRequest {
+    string id = 1;
+    string password = 2;
+}
+
+message S2CLoginResponse {
+    bool success = 1;
+    string message = 2;
+    string token = 3;
+    GlobalFailCode failCode = 4;
+}
+
+message C2SMatchRequest {
+}
+
+message S2CMatchStartNotification {
+    InitialGameState initialGameState = 1;
+    GameState playerData = 2;
+    GameState opponentData = 3;
+}
+
+message S2CStateSyncNotification {
+    int32 userGold = 1;
+    int32 baseHp = 2;
+    int32 monsterLevel = 3;
+    int32 score = 4;
+    repeated TowerData towers = 5;
+    repeated MonsterData monsters = 6;
+}
+
+message C2STowerPurchaseRequest {
+    float x = 1;
+    float y = 2;
+}
+
+message S2CTowerPurchaseResponse {
+    int32 towerId = 1;
+}
+
+message S2CAddEnemyTowerNotification {
+    int32 towerId = 1;
+    float x = 2;
+    float y = 3;
+}
+
+message C2SSpawnMonsterRequest {
+}
+
+message S2CSpawnMonsterResponse {
+    int32 monsterId = 1; 
+    int32 monsterNumber = 2;
+}
+
+message S2CSpawnEnemyMonsterNotification {
+    int32 monsterId = 1;
+    int32 monsterNumber = 2;
+}
+
+message C2STowerAttackRequest {
+    int32 towerId = 1;
+    int32 monsterId = 2;
+}
+
+message S2CEnemyTowerAttackNotification {
+    int32 towerId = 1;
+    int32 monsterId = 2;
+}
+
+message C2SMonsterAttackBaseRequest {
+    int32 damage = 1;
+}
+
+message S2CUpdateBaseHPNotification {
+    bool isOpponent = 1; // HP를 업데이트 할 기지가 상대방 기지라면 true
+    int32 baseHp = 2;
+}
+
+message S2CGameOverNotification {
+    bool isWin = 1; // 받는 플레이어가 승리했으면 true
+}
+
+message C2SGameEndRequest {
+}
+
+message C2SMonsterDeathNotification {
+    int32 monsterId = 1;
+}
+
+message S2CEnemyMonsterDeathNotification {
+    int32 monsterId = 1;
+}
+
+// 최상위 GamePacket 메시지
+message GamePacket {
+    oneof payload {
+        // 회원가입 및 로그인
+        C2SRegisterRequest registerRequest = 1;
+        S2CRegisterResponse registerResponse = 2;
+        C2SLoginRequest loginRequest = 3;
+        S2CLoginResponse loginResponse = 4;
+
+        // 매칭
+        C2SMatchRequest matchRequest = 5;
+        S2CMatchStartNotification matchStartNotification = 6;
+
+        // 상태 동기화
+        S2CStateSyncNotification stateSyncNotification = 7;
+
+        // 타워 구입 및 배치
+        C2STowerPurchaseRequest towerPurchaseRequest = 8;
+        S2CTowerPurchaseResponse towerPurchaseResponse = 9;
+        S2CAddEnemyTowerNotification addEnemyTowerNotification = 10;
+
+        // 몬스터 생성
+        C2SSpawnMonsterRequest spawnMonsterRequest = 11;
+        S2CSpawnMonsterResponse spawnMonsterResponse = 12;
+        S2CSpawnEnemyMonsterNotification spawnEnemyMonsterNotification = 13;
+
+        // 전투 액션
+        C2STowerAttackRequest towerAttackRequest = 14;
+        S2CEnemyTowerAttackNotification enemyTowerAttackNotification = 15;
+        C2SMonsterAttackBaseRequest monsterAttackBaseRequest = 16;
+
+        // 기지 HP 업데이트 및 게임 오버
+        S2CUpdateBaseHPNotification updateBaseHpNotification = 17;
+        S2CGameOverNotification gameOverNotification = 18;
+
+        // 게임 종료  
+        C2SGameEndRequest gameEndRequest = 19;
+
+        // 몬스터 사망 통지
+        C2SMonsterDeathNotification monsterDeathNotification = 20;
+        S2CEnemyMonsterDeathNotification enemyMonsterDeathNotification = 21;
+    }
+}
+

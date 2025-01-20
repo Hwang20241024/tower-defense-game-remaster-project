@@ -1,0 +1,17 @@
+// 서버 초기화 작업
+import { loadProtos } from "./loadProtos.js";
+
+const initServer = async () => {
+  try {
+    // proto 파일 초기화
+    await loadProtos();
+
+    // 초기화 작업 추가.
+
+  } catch (e) {
+    console.error(e);
+    process.exit(1); // 오류 발생 시 프로세스 종료
+  }
+};
+
+export default initServer;
