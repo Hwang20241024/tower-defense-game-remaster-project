@@ -54,8 +54,7 @@
 ## 3-3. 추가...
 
 # 4. Tech Stack (임시)
-[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis&theme=light)](https://skillicons.dev)
-
+[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis,unity&theme=light)](https://skillicons.dev)
 
 
 
