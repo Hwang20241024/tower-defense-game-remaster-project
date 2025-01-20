@@ -1,5 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=300&section=header&text=%EC%95%84%EC%9D%B4%EC%98%A4%EB%8B%89&fontSize=70&textColor=white" style="width: 100%; height: auto;" />
-
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=300&section=header&text=%EC%82%AC%EC%A1%B0%EC%B0%B8%EC%B9%98&fontSize=70&textColor=white" style="width: 100%; height: auto;" />
 
 # 1. Architecture
 
@@ -55,8 +54,7 @@
 ## 3-3. 추가...
 
 # 4. Tech Stack (임시)
-[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis&theme=light)](https://skillicons.dev)
-
+[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis,unity&theme=light)](https://skillicons.dev)
 
 
 
