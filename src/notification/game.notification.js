@@ -16,10 +16,12 @@ export const enemyTowerAttackNotification = (data) => {
   const protoMessages = getProtoMessages();
   const enemyTowerAttack = protoMessages.towerDefense.S2CEnemyTowerAttackNotification;
 
-  const towerId = data.towerId;
-  const monsterId = data.monsterId;
+  // const towerId = data.towerId;
+  // const monsterId = data.monsterId;
 
-  const payload = { towerId, monsterId };
+  // const payload = { towerId, monsterId };
+
+  const payload = data;
   const message = enemyTowerAttack.create(payload);
 
   const enemyTowerAttackPacket = enemyTowerAttack.encode(message).finish();

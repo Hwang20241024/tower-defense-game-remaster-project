@@ -8,7 +8,6 @@ class Game {
     this.id = uuidv4();
   }
 
-  // 업데이트 함수(능동적인 서버)
   getGameId() {
     return this.id;
   }
