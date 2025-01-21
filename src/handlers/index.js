@@ -1,9 +1,13 @@
 import { HANDLER_IDS } from '../constants/handlerIds.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import CustomError from '../utils/error/customError.js';
+import { monsterAttackBaseHandler } from './game/towerAttack.handler.js';
 
 const handlers = {
   // 다른 핸들러들을 추가
+  [HANDLER_IDS.monsterAttackBase]: {
+    handler: monsterAttackBaseHandler,
+  },
 };
 
 export const getHandlerById = (handlerId) => {
