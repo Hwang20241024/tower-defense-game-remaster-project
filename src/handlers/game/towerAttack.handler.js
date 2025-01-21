@@ -1,5 +1,5 @@
 import { config } from '../../config/config.js';
-import { enemyTowerAttackNotification } from '../../notification/game.notification.js';
+import { enemyTowerAttackNotification } from '../../utils/notification/game.notification.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';

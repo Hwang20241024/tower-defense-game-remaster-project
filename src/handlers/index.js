@@ -3,7 +3,7 @@ import { PACKET_TYPE } from '../constants/header.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import CustomError from '../utils/error/customError.js';
 import spawnMonsterHandler from './spawnMonster.handler.js';
-import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler copy.js';
+import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler.js';
 import { towerAttackHandler } from './game/towerAttack.handler.js';
 
 const handlers = {
