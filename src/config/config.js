@@ -8,16 +8,14 @@ export const config = {
   },
   client: {
     version: CLIENT_VERSION,
-    },
+  },
   packet: {
     typeLength: PACKET_DATA.PACKET_TYPE_LENGTH,
     versionLength: PACKET_DATA.VERSION_LENGTH,
     sequenceLength: PACKET_DATA.SEQUENCE_LENGTH,
     payLoadLength: PACKET_DATA.PAYLOAD_LENGTH,
-    },
+  },
   // 필요한 만큼 추가
-
-
   gameSession: {
     MAX_PLAYERS: 4,
   },

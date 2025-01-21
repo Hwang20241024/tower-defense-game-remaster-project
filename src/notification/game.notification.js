@@ -26,5 +26,5 @@ export const enemyTowerAttackNotification = (data) => {
 
   const enemyTowerAttackPacket = enemyTowerAttack.encode(message).finish();
 
-  return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.enemyTowerAttackNotification);
+  return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
 };
