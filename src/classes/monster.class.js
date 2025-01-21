@@ -26,9 +26,10 @@ export default class Monster {
 
   // 몬스터 생성.
   addMonster(monsterId, monsterNumber, level) {
+    const lower32Bits = parseInt(monsterId.replace(/-/g, '').slice(-8), 16);
     // 몬스터 정보.
     const monsterInfo = {
-      monsterId: monsterId,
+      monsterId: lower32Bits,
       monsterNumber: monsterNumber,
       level: level,
     }
@@ -51,13 +52,13 @@ export default class Monster {
     if (!this.validateKey(monsterId)) {
       return;
     }
-
+    
     return this.monsters[monsterId];
   }
 
   // 몬스터들 찾기.
   getMonsters() {
-    return this.monsters;
+    return Object.values(this.monsters);
   }
 
   // 키 검증
