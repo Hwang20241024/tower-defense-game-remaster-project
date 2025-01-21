@@ -1,6 +1,6 @@
 class Tower {
-  constructor(id, x, y) {
-    this.id = id;
+  constructor(towerId, x, y) {
+    this.id = towerId;
     this.x = x;
     this.y = y;
   }
