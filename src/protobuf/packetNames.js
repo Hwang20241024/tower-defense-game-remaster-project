@@ -86,6 +86,9 @@ export const packetNames = {
 
     // 최상위 게임 패킷 (GamePacket)
     GamePacket: 'towerDefense.GamePacket',
+
+    // 공통패킷
+    CommonPacket: 'towerDefense.CommonPacket',
   },
   // 새로운 프로토 파일이 추가되면 여기에 새로운 항목 추가
 };

@@ -6,13 +6,18 @@ export const config = {
     port: PORT,
     host: HOST,
   },
-  packetLength: {
-    packetType: PACKET_DATA.PACKET_TYPE_LENGTH,
+  client: {
+    version: CLIENT_VERSION,
+    },
+  packet: {
+    typeLength: PACKET_DATA.PACKET_TYPE_LENGTH,
     versionLength: PACKET_DATA.VERSION_LENGTH,
     sequenceLength: PACKET_DATA.SEQUENCE_LENGTH,
-    payloadLength: PACKET_DATA.PAYLOAD_LENGTH,
-  },
+    payLoadLength: PACKET_DATA.PAYLOAD_LENGTH,
+    },
   // 필요한 만큼 추가
+
+
   gameSession: {
     MAX_PLAYERS: 4,
   },
