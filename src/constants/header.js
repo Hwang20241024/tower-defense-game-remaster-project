@@ -7,8 +7,9 @@ export const PACKET_DATA = {
   VERSION_LENGTH: 1,
   SEQUENCE_LENGTH: 4,
   PAYLOAD_LENGTH: 4,
-}
+};
 
 export const PACKET_TYPE = {
-    test: 0,
-  };
+  test: 0,
+  enemyTowerAttackNotification: 14,
+};
