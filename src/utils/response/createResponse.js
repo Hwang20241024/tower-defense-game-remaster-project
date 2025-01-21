@@ -1,5 +1,5 @@
-import { PACKET_DATA } from '../../constants/header';
-import { CLIENT_VERSION } from '../../constants/env';
+import { PACKET_DATA } from '../../constants/header.js';
+import { CLIENT_VERSION } from '../../constants/env.js';
 
 // 패킷 명세 
 // 1. packetType (ushort)     패킷 타입(2바이트)
