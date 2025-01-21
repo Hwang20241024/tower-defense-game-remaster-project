@@ -1,6 +1,7 @@
 class User {
   constructor(socket) {
     this.socket = socket;
+    this.towers = [];
   }
 
   setGameId(gameId) {
