@@ -7,5 +7,7 @@ message CommonPacket {
   ushort16 packetType = 1;
   ubyte8 versionLength = 2;
   string version = 3;
-  bytes payload = 4;
+  uint32 sequence = 4;
+  uint32 payloadLength = 5;
+  bytes payload = 6;
 }
