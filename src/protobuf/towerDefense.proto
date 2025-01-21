@@ -207,3 +207,13 @@ message GamePacket {
     }
 }
 
+
+message CommonPacket {
+    uint32 packetType = 1;         // 패킷 타입 (ushort, 2바이트)
+    uint32 versionLength = 2;      // 버전 길이 (ubyte, 1바이트)
+    string version = 3;            // 버전 (string, UTF-8 문자열)
+    uint32 sequence = 4;           // 시퀀스 (uint32, 4바이트)
+    uint32 payloadLength = 5;      // 데이터 길이 (uint32, 4바이트)
+    bytes payload = 6;             // 실제 데이터 (bytes, 실제 데이터)
+}
+
