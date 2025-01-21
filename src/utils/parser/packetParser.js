@@ -5,7 +5,6 @@ import CustomError from '../error/customError.js';
 import { ErrorCodes } from '../error/errorCodes.js';
 
 export const packetParser = (socket, data) => {
-  socket.buffer = Buffer.concat([socket.buffer, data]);
   let offset = 0;
   // 패킷 타입 (2바이트)
   const packetType = socket.buffer.readUInt16BE(offset);
@@ -34,6 +33,7 @@ export const packetParser = (socket, data) => {
 
   // 실제 데이터.
   const payloadData = socket.buffer.slice(offset, offset + payloadLength);
+  offset += payloadLength;
 
   // 클라이언트 검증
   if (version !== config.client.version) {
@@ -43,7 +43,6 @@ export const packetParser = (socket, data) => {
     );
   }
 
-  console.log(packetType);
   // 패킷 타입에 따라 적절한 payload 구조를 디코딩
   const protoMessages = getProtoMessages();
   const protoTypeName = getProtoTypeNameByPacketType(packetType);
@@ -52,9 +51,8 @@ export const packetParser = (socket, data) => {
   }
 
   const [namespace, typeName] = protoTypeName.split('.');
-  const PayloadType = protoMessages[namespace][typeName];
-  console.log(namespace);
-  console.log(typeName);
+  const PayloadType = protoMessages.towerDefense.GamePacket;
+
   let payload;
   try {
     console.log(typeName);
@@ -63,16 +61,10 @@ export const packetParser = (socket, data) => {
     throw new CustomError(ErrorCodes.PACKET_STRUCTURE_MISMATCH, '패킷 구조가 일치하지 않습니다.');
   }
 
-  return {
-    packetType,
-    versionLength,
-    version,
-    sequence,
-    payloadLength,
-    payload,
-    offset,
-  };
+  for (let key in payload) {
+    if (payload.hasOwnProperty(key) && typeof payload[key] === 'object') {
+      return { packetType, sequence, payload: payload[key], offset: offset + payloadLength };
+    }
+  }
 
-  
 };
-
