@@ -16,9 +16,10 @@ export const removeGameSession = (gameId) => {
 };
 
 export const removeUserInSession = (socket, gameId) => {
-  gameSessions.removeUser(socket); // 유저의 인터벌 삭제
+  const session = getGameSession(gameId);
+  const remainingUser = session.removeUser(socket);
 
-  if (gameSessions.size === 0) {
+  if (remainingUser === 0) {
     removeGameSession(gameId);
   }
 };
