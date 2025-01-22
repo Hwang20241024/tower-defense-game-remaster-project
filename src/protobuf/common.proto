@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common; // 네임 스페이스
+
+// 공통 패킷 구조
+message CommonPacket {
+  uint32 packetType = 1;       // ushort (16비트 부호 없는 정수)
+  uint32 versionLength = 2;    // ubyte (8비트 부호 없는 정수)
+  string version = 3;
+  uint32 sequence = 4;
+  uint32 payloadLength = 5;
+  bytes payload = 6;
+}
