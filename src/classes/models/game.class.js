@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
-import TowerManager from './managers/tower.manager.js';
+import TowerManager from '../managers/tower.manager.js';
 
 class Game {
   constructor() {
