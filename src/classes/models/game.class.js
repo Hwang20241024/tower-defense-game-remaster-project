@@ -62,15 +62,6 @@ class Game {
     else return false;
   }
 
-  getMaxLatency() {
-    let maxLatency = 0;
-    this.users.forEach((user) => {
-      maxLatency = Math.max(maxLatency, user.latency);
-    });
-
-    return maxLatency;
-  }
-
   // 상대방한테만 브로드캐스트
   broadcast(packet, socket) {
     this.users.forEach((user) => {

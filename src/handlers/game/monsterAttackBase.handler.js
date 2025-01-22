@@ -13,8 +13,7 @@ export const monsterAttackBaseHandler = ({ socket, payload }) => {
   }
 
   // 1. damage가 유효한지 검증
-  // -> 안타깝지만 못한다. 왜냐하면 클라이언트에서 에셋파일로 몬스터의 데미지를 정의하고 있기 때문에
-  // 서버는 relational하게 구현할 수밖에 없다.
+  // 클라이언트에서 에셋파일로 몬스터의 데미지를 정의하고 있기 때문에 config에 하드코딩해둔 값으로 검증하거나 json 파일을 만들어야 함
 
   // 2. 몬스터의 위치가 정말로 endPoint에 다다랐는가?(최소한의 검증)
   let monsterPos; // 이걸 서버에서 상태 동기화 중인 몬스터 좌표라고 가정
