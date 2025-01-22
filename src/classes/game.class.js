@@ -30,6 +30,10 @@ class Game {
     if (this.users.length < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
     }
+
+    if (this.users.length === 0) {
+      removeGameSession(this.id);
+    }
   }
 
   addMonster(monster) {

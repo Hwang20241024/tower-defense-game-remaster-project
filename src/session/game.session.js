@@ -17,11 +17,7 @@ export const removeGameSession = (gameId) => {
 
 export const removeUserInSession = (socket, gameId) => {
   const session = getGameSession(gameId);
-  const remainingUser = session.removeUser(socket);
-
-  if (remainingUser === 0) {
-    removeGameSession(gameId);
-  }
+  session.removeUser(socket);
 };
 
 export const getGameSession = (gameId) => {
