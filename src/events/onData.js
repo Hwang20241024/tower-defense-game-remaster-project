@@ -19,7 +19,7 @@ export const onData = (socket) => async (data) => {
 
       // 예시 입니다.
       const handler =  getHandlerById(packetType);
-      await handler(socket);
+      await handler(socket, payload);
 
     } catch (error) {
       // 처리할 수 없는 경우, 남은 데이터를 유지하고 종료
