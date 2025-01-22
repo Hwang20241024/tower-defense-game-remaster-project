@@ -26,7 +26,7 @@ export const getAllGameSessions = () => {
 export const getEnableGameSession = () => {
   let result = null;
   gameSessions.forEach((session, key) => {
-    if (session.users.length < config.gameSession.MAX_PLAYERS && result === null) {
+    if (session.users.size < config.gameSession.MAX_PLAYERS && result === null) {
       result = session;
     }
   });
