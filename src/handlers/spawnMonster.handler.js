@@ -1,35 +1,21 @@
-import MonsterManager from '../classes/managers/monster.manager.js';
 import { createResponse } from '../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import { getProtoMessages } from '../init/loadProtos.js';
-import { v4 as uuidv4 } from 'uuid';
-import { getAllGameSessions, getGameSession } from '../session/game.session.js';
+import { getGameSession } from '../session/game.session.js';
+import { getUserBySocket } from '../session/user.session.js';
 
 const spawnMonsterHandler = async (socket, payload) => {
-  // 몬스터 생성.
-  const monsterId = uuidv4(); // 몬스터id 생성.
-  const lower32Bits = parseInt(monsterId.replace(/-/g, '').slice(-8), 16);
-  const monsterNumber = Math.floor(Math.random() * 5) + 1; // 몬스터넘버 (1~5) 랜덤.
 
   // 게임Id 가져오기.
-  let gameSessions = getAllGameSessions();
-  let gameId;
-  for (let value of gameSessions) {
-    const user = value.getUser(socket);
-    if (user) {
-      gameId = value.id;
-    }
-  }
+  const gameId = getUserBySocket(socket);
+  const gameSession = getGameSession(gameId.getGameId());
 
-  // 몬스터가 저장될 세션이 없다면추가 있으면 생략.
-  MonsterManager.getInstance().addSession(gameId);
-
-  // 몬스터 추가.
-  MonsterManager.getInstance().addMonsterToSession(gameId, lower32Bits, monsterNumber, 1);
-
+  // 몬스터 추가
+  gameSession.addMonster(1);
+  // 갱신후 마지막 몬스터를 가져오기
+  const monster = gameSession.getLastMonster();
 
   const protoMessages = getProtoMessages();
-  const monster = MonsterManager.getInstance().getMonster(gameId, lower32Bits);
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
@@ -47,7 +33,6 @@ const spawnMonsterHandler = async (socket, payload) => {
   socket.write(initialResponse);
 
   // 브로드 캐스트 (동기화)
-  const gameSession = getGameSession(gameId);
   const initialResponse2 = createResponse(
     PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION,
     0,
