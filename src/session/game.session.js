@@ -1,4 +1,4 @@
-import { gameSessions } from './sessions.js';
+import { gameSessions } from './session.js';
 import Game from '../classes/models/game.class.js';
 import { config } from '../config/config.js';
 
@@ -30,5 +30,7 @@ export const getEnableGameSession = () => {
       result = session;
     }
   });
+  if (!result) result = addGameSession();
+
   return result;
 };

@@ -25,18 +25,31 @@ const purchaseTowerHandler = async (socket, payload) => {
     // 타워 생성
     const towerId = game.towerManager.addTower(socket, x, y);
 
+    const response = protoMessages.towerDefense.GamePacket;
+    const responseGamePacket = response.create({
+      S2CTowerPurchaseResponse: { towerId, message: '타워가 생성되었습니다.' },
+    });
+
+    const responsePayLoad = response.encode(responseGamePacket).finish();
+
     const towerPurchaseResponse = createResponse(
       PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
       user.sequence,
-      { towerId, message: '타워가 생성되었습니다.' },
+      responsePayLoad,
     );
 
     socket.write(towerPurchaseResponse);
 
+    const notificationGamePacket = response.create({
+      S2CAddEnemyTowerNotification: { towerId, x, y, message: '적이 타워를 생성했습니다.' },
+    });
+
+    const notificationPayLoad = response.encode(notificationGamePacket).finish();
+
     const addEnemyTowerNotificationResponse = createResponse(
       PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
       user.sequence,
-      { towerId, x, y, message: '적이 타워를 생성했습니다.' },
+      notificationPayLoad,
     );
 
     game.broadcast(addEnemyTowerNotificationResponse, socket);

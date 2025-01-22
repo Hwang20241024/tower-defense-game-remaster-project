@@ -3,7 +3,8 @@ import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
 import MonsterManager from '../managers/monster.manager.js';
 import { removeGameSession } from '../../session/game.session.js';
-import { getUserBySocket } from '../../session/user.session.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 class Game {
   constructor() {
@@ -25,6 +26,10 @@ class Game {
     const userSocket = user.getUserSocket();
 
     this.users.set(userSocket, user);
+
+    if (this.users.size === config.gameSession.MAX_PLAYERS) {
+      this.matchStartNotification();
+    }
   }
 
   getUser(socket) {
@@ -72,6 +77,85 @@ class Game {
         user.socket.write(packet);
       }
     });
+  }
+
+  // 매치가 시작되었음을 알림
+  matchStartNotification() {
+    // 게임에 있는 모든 유저에게 데이터 전송
+    for (var [socket, user] of this.users) {
+      // 초기 상태
+      const initialGameState = {
+        baseHp: 100,
+        towerCost: 100,
+        initialGold: 100,
+        monsterSpawnInterval: 1,
+      };
+
+      const towerDatas = [];
+      const monsterDatas = [];
+      const monsterPaths = [];
+
+      // 내 데이터
+      const playerData = {
+        gold: 100,
+        base: {
+          hp: 100,
+          maxHp: 100,
+        },
+        highScore: 0,
+        towers: towerDatas,
+        monsters: monsterDatas,
+        monsterLevel: 0,
+        score: 0,
+        monsterPath: monsterPaths,
+        basePosition: {
+          x: 0,
+          y: 0,
+        },
+      }
+
+      // 상대 데이터
+      const opponentData = {
+        gold: 100,
+        base: {
+          hp: 100,
+          maxHp: 100,
+        },
+        highScore: 0,
+        towers: towerDatas,
+        monsters: monsterDatas,
+        monsterLevel: 0,
+        score: 0,
+        monsterPath: monsterPaths,
+        basePosition: {
+          x: 0,
+          y: 0,
+        },
+      }
+
+      const matchStartNotificationResponse = createResponse(
+        PACKET_TYPE.MATCH_START_NOTIFICATION,
+        user.sequence,
+        { initialGameState, playerData, opponentData, message: 'match start' },
+      );
+
+      this.broadcast(matchStartNotificationResponse, socket);
+    }
+  }
+
+  // 내 상태를 알림
+  stateSyncNotification() {
+    const towerDatas = [];
+    const monsterDatas = [];
+
+    return {
+      userGold: 0,
+      baseHp: 0,
+      monsterLevel: 0,
+      score: 0,
+      TowerData: towerDatas,
+      MonsterData: monsterDatas,
+    }
   }
 }
 

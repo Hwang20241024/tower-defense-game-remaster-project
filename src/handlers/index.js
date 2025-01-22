@@ -3,6 +3,8 @@ import { PACKET_TYPE } from '../constants/header.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import CustomError from '../utils/error/customError.js';
 import spawnMonsterHandler from './spawnMonster.handler.js';
+import singUpHandler from './singUp.handler.js';
+import singInHandler from './singIn.handler.js';
 import { matchHandler } from './match.handler.js';
 import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler.js';
 import { towerAttackHandler } from './game/towerAttack.handler.js';
@@ -15,14 +17,14 @@ const handlers = {
     protoType: 'towerDefense.C2SSpawnMonsterRequest',
   },
   [PACKET_TYPE.REGISTER_REQUEST]: {
-    handler: spawnMonsterHandler, // 이거 테스트니깐 수정해야함
+    handler: singUpHandler,
     protoType: 'towerDefense.C2SRegisterRequest',
   },
   [PACKET_TYPE.LOGIN_REQUEST]: {
-    handler: spawnMonsterHandler, // 이거 테스트니깐 수정해야함
+    handler: singInHandler,
     protoType: 'towerDefense.C2SLoginRequest',
   },
-  [PACKET_TYPE.LOGIN_REQUEST]: {
+  [PACKET_TYPE.MATCH_REQUEST]: {
     handler: matchHandler, // 이거 테스트니깐 수정해야함
     protoType: 'towerDefense.C2SMatchRequest',
   },
