@@ -4,6 +4,7 @@ import TowerManager from '../managers/tower.manager.js';
 import { removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
 
 class Game {
   constructor() {
@@ -130,13 +131,23 @@ class Game {
         },
       }
 
-      const matchStartNotificationResponse = createResponse(
-        PACKET_TYPE.MATCH_START_NOTIFICATION,
-        user.sequence,
-        { initialGameState, playerData, opponentData, message: 'match start' },
-      );
-
-      this.broadcast(matchStartNotificationResponse, socket);
+      try {
+        const protoMessages = getProtoMessages()
+        const S2CMatchStartNotification = protoMessages.towerDefense.GamePacket;
+        const message = S2CMatchStartNotification.create({ matchStartNotification: { initialGameState, playerData, opponentData } });
+        const payload = S2CMatchStartNotification.encode(message).finish();
+        console.log(payload);
+        const decodedMessage = S2CMatchStartNotification.decode(payload);
+        console.log(decodedMessage);
+        const matchStartNotificationResponse = createResponse(
+          PACKET_TYPE.MATCH_START_NOTIFICATION,
+          user.sequence,
+          payload,
+        );
+        socket.write(matchStartNotificationResponse);
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
