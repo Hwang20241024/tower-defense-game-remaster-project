@@ -16,11 +16,9 @@ const spawnMonsterHandler = async (socket) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    payload: {
-      spawnMonsterResponse: {
-        monsterId: monster.monsterId,
-        monsterNumber: monster.monsterNumber,
-      },
+    spawnMonsterResponse: {
+      monsterId: monster.monsterId,
+      monsterNumber: monster.monsterNumber,
     },
   });
 
