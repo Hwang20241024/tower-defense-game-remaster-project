@@ -9,12 +9,17 @@ import { matchHandler } from './match.handler.js';
 import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler.js';
 import { towerAttackHandler } from './game/towerAttack.handler.js';
 import purchaseTowerHandler from './game/purchaseTower.handler.js';
+import monsterDeathHandler from './monsterDeath.handler.js'
 
 const handlers = {
   // 다른 핸들러들을 추가
   [PACKET_TYPE.SPAWN_MONSTER_REQUEST]: {
     handler: spawnMonsterHandler,
     protoType: 'towerDefense.C2SSpawnMonsterRequest',
+  },
+  [PACKET_TYPE.MONSTER_DEATH_NOTIFICATION]: {
+    handler: monsterDeathHandler,
+    protoType: 'towerDefense.C2SMonsterDeathNotification',
   },
   [PACKET_TYPE.REGISTER_REQUEST]: {
     handler: singUpHandler,

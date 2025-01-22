@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
+import MonsterManager from '../managers/monster.manager.js';
 import { removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
@@ -9,7 +10,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 class Game {
   constructor() {
     this.users = new Map();
-    this.monsters = [];
+    this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
     this.id = uuidv4();
   }
@@ -49,16 +50,18 @@ class Game {
     return this.users.size;
   }
 
-  addMonster(monster) {
-    this.monsters.push(monster);
+  // 수정해야합니다. 레벨 
+  addMonster(level) {
+    this.monsterManager.addMonster(this.id, level); 
   }
 
   getMonster(monsterId) {
-    return this.monsters.find((monster) => monster.id === monsterId);
+    const findMonsters = this.monsterManager.getMonstersArr();
+    return findMonsters.find((monster) => monster.id === monsterId);
   }
 
   removeMonster(monsterId) {
-    this.monsters = this.monsters.filter((monster) => monster.id !== monsterId);
+    this.monsterManager.removeMonster(monsterId);
   }
 
   checkIsTowerOwner(socket, towerId) {
