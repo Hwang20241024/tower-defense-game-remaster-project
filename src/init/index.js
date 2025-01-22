@@ -1,12 +1,12 @@
 // 서버 초기화 작업
 import { loadProtos } from "./loadProtos.js";
-import Monster from "../classes/monster.class.js";
+import MonsterManager from "../classes/managers/monster.manager.js";
 
 const initServer = async () => {
   try {
     // 초기화
     await loadProtos();     // 프로토파일 읽기.
-    Monster.getInstance();  // 몬스터 인스턴스 생성.
+    MonsterManager.getInstance();  // 몬스터매니저 인스턴스 생성.
 
     // 초기화 작업 추가.
 
