@@ -26,7 +26,7 @@ export const config = {
   },
   // 필요한 만큼 추가
   gameSession: {
-    MAX_PLAYERS: 4,
+    MAX_PLAYERS: 2,
   },
   ingame: {
     offset: 2,

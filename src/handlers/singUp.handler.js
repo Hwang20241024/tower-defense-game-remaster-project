@@ -10,8 +10,6 @@ import { getProtoMessages } from '../init/loadProtos.js';
 const singUpHandler = async (socket, payload, sequence) => {
   const { id, password, email } = payload;
 
-  console.log(id, password, email);
-
   // 1. Payload 유효성 검사
   if (!id) {
     throw new CustomError(ErrorCodes.INVALID_VALUE, '아이디는 필수 입력 입니다.');
@@ -28,7 +26,7 @@ const singUpHandler = async (socket, payload, sequence) => {
   // 이메일 형식 체크
   const regEmail =
     /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-  console.log(regEmail.test(email));
+
   if (!regEmail.test(email)) {
     throw new CustomError(ErrorCodes.INVALID_VALUE, '이메일 형식이 아닙니다.');
   }
@@ -53,7 +51,7 @@ const singUpHandler = async (socket, payload, sequence) => {
     ++sequence,
     responsePayload,
   );
-  console.log(responsePacket);
+
   socket.write(responsePacket);
 };
 
