@@ -6,8 +6,6 @@ const initServer = async () => {
   try {
     // 초기화
     await loadProtos();     // 프로토파일 읽기.
-    MonsterManager.getInstance();  // 몬스터매니저 인스턴스 생성.
-
     // 초기화 작업 추가.
 
   } catch (e) {
