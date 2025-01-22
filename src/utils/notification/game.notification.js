@@ -15,7 +15,7 @@ export const enemyTowerAttackNotification = (data, socket) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    S2CEnemyTowerAttackNotification: data,
+    enemyTowerAttackNotification: data,
   });
 
   const enemyTowerAttackPacket = response.encode(gamePacket).finish();
@@ -39,7 +39,7 @@ export const updateBaseHPNotification = (data, socket) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    S2CUpdateBaseHPNotification: data,
+    updateBaseHPNotification: data,
   });
 
   const updateBaseHPPacket = response.encode(gamePacket).finish();
@@ -59,7 +59,7 @@ export const gameOverNotification = (data, socket) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    S2CGameOverNotification: data,
+    gameOverNotification: data,
   });
 
   const gameOverPacket = response.encode(gamePacket).finish();
