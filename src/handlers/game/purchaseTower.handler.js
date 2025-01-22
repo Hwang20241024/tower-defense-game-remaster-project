@@ -1,42 +1,46 @@
 import { handleError } from '../../utils/error/errorHandler.js';
+import CustomError from '../../utils/error/customError.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { PACKET_TYPE } from '../../constants/header.js';
 
 const purchaseTowerHandler = async ({ socket, userId, payload }) => {
   try {
     const { x, y } = payload;
 
-    // TODO 유저 검사
+    // 유저 검사
+    const user = getUserBySocket(socket); // TODO 세션 함수 참조
+    if (!user) {
+      throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+    }
 
-    // const user = getUserBySocket(Socket);
-    // if (!user) {
-    //   throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-    // }
+    // 게임 검사
+    const game = getGameSession(user.gameId); // TODO 세션 함수 참조
+    if (!game) {
+      throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임을 찾을 수 없습니다.');
+    }
 
-    // TODO 가격 검사
-
-    /** TODO 위치 검사 */
-
-    // TODO 타워 위치 검사
-
-    // TODO 길 위치 검사?
-
-    /** endof 위치 검사 */
-
-    // TODO 타워 생성
-
-    // const towerId = game.towermanager.addTower(x,y);
+    // 타워 생성
+    const towerId = game.towerManager.addTower(x, y);
 
     const towerPurchaseResponse = createResponse(
-      HANDLER_IDS.CREATE_GAME,
-      RESPONSE_SUCCESS_CODE,
+      PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
+      user.sequence, // TODO 시퀀스 문의
       { towerId, message: '타워가 생성되었습니다.' },
-      userId,
     );
 
-    // socket.write(createGameResponse);
+    socket.write(towerPurchaseResponse);
+
+    const addEnemyTowerNotificationResponse = createResponse(
+      PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
+      user.sequence, // TODO 시퀀스 문의
+      { towerId, x, y, message: '적이 타워를 생성했습니다.' },
+    );
+
+    game.broadcast(addEnemyTowerNotificationResponse, socket);
   } catch (error) {
     handleError(socket, error);
   }
 };
 
-export default createGameHandler;
+export default purchaseTowerHandler;
