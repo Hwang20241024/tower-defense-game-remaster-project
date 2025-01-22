@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
+import TowerManager from '../managers/tower.manager.js';
 
 class Game {
   constructor() {
-    this.users = [];
+    this.users = new Map();
     this.monsters = [];
+    this.towerManager = new TowerManager();
     this.id = uuidv4();
   }
 
@@ -13,27 +15,28 @@ class Game {
   }
 
   addUser(user) {
-    if (this.users.length >= config.gameSession.MAX_PLAYERS) {
+    if (this.users.size >= config.gameSession.MAX_PLAYERS) {
       throw new Error('Game session is full');
     }
-    this.users.push(user);
+
+    const userSocket = user.getUserSocket();
+
+    this.users.set(userSocket, user);
   }
 
   getUser(socket) {
-    return this.users.find((user) => user.socket === socket);
+    return this.users.get(socket);
   }
 
   removeUser(socket) {
-    this.users = this.users.filter((user) => user.socket !== socket);
+    this.users.delete(socket);
     this.intervalManager.removePlayer(socket);
 
-    if (this.users.length < config.gameSession.MAX_PLAYERS) {
+    if (this.users.size < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
     }
 
-    if (this.users.length === 0) {
-      removeGameSession(this.id);
-    }
+    return this.users.size();
   }
 
   addMonster(monster) {
@@ -46,6 +49,13 @@ class Game {
 
   removeMonster(monsterId) {
     this.monsters = this.monsters.filter((monster) => monster.id !== monsterId);
+  }
+
+  checkIsTowerOwner(socket, towerId) {
+    const towerUser = this.intervalManager.get(towerId).getUserSocket();
+
+    if (towerUser === socket) return true;
+    else return false;
   }
 
   getMaxLatency() {
