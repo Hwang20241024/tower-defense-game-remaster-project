@@ -1,4 +1,13 @@
-import { PORT, HOST, CLIENT_VERSION } from '../constants/env.js';
+import {
+  PORT,
+  HOST,
+  CLIENT_VERSION,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  DB_HOST,
+  DB_PORT,
+} from '../constants/env.js';
 import { PACKET_DATA } from '../constants/header.js';
 
 export const config = {
@@ -23,5 +32,14 @@ export const config = {
     offset: 2,
     towerPower: 40,
     baseHp: 100,
+  },
+  databases: {
+    CH5_TEAM: {
+      name: DB_NAME,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      host: DB_HOST,
+      port: DB_PORT,
+    },
   },
 };
