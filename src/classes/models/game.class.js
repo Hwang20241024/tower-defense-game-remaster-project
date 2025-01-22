@@ -52,7 +52,7 @@ class Game {
 
   // 수정해야합니다. 레벨 
   addMonster(level) {
-    this.monsterManager.addMonster(this.id, level); 
+    this.monsterManager.addMonster(this.id, level);
   }
 
   getMonster(monsterId) {
@@ -136,16 +136,25 @@ class Game {
 
       try {
         const protoMessages = getProtoMessages()
-        const S2CMatchStartNotification = protoMessages.towerDefense.GamePacket;
-        const message = S2CMatchStartNotification.create({ matchStartNotification: { initialGameState, playerData, opponentData } });
-        const payload = S2CMatchStartNotification.encode(message).finish();
-        console.log(payload);
-        const decodedMessage = S2CMatchStartNotification.decode(payload);
-        console.log(decodedMessage);
+        const GamePacket = protoMessages.towerDefense.GamePacket;
+        const payload = {
+          matchStartNotificationResponse: {
+            initialGameState,
+            playerData,
+            opponentData
+          }
+        };
+        const errMsg = GamePacket.verify(payload);
+        if(errMsg){
+          throw Error(errMsg);
+        }
+
+        const message = GamePacket.create(payload);
+        const buffer = GamePacket.encode(message).finish();
         const matchStartNotificationResponse = createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
           user.sequence,
-          payload,
+          buffer,
         );
         socket.write(matchStartNotificationResponse);
       } catch (error) {
