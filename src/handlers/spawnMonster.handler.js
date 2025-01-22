@@ -4,7 +4,7 @@ import { PACKET_TYPE } from '../constants/header.js';
 import { getProtoMessages } from '../init/loadProtos.js';
 import { v4 as uuidv4 } from 'uuid';
 
-const spawnMonsterHandler = async (socket) => {
+const spawnMonsterHandler = async (socket, payload) => {
   // 몬스터 생성.
   const monsterId = uuidv4(); // 몬스터id 생성.
   const monsterNumber = Math.floor(Math.random() * 5) + 1; // 몬스터넘버 (1~5) 랜덤.
