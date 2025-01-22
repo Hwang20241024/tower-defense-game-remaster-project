@@ -12,5 +12,5 @@ export const removeUser = (socket) => {
 };
 
 export const getUserBySocket = (socket) => {
-  return userSessions.find((user) => user.socket === socket);
+  return userSessions.get(socket);
 };
