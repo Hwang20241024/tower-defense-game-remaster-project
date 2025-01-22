@@ -1,10 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/config.js';
+import TowerManager from '../managers/tower.manager.js';
+import { removeGameSession } from '../../session/game.session.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 class Game {
   constructor() {
-    this.users = [];
+    this.users = new Map();
     this.monsters = [];
+    this.towerManager = new TowerManager();
     this.id = uuidv4();
   }
 
@@ -13,26 +17,34 @@ class Game {
   }
 
   addUser(user) {
-    if (this.users.length >= config.gameSession.MAX_PLAYERS) {
+    if (this.users.size >= config.gameSession.MAX_PLAYERS) {
       throw new Error('Game session is full');
     }
-    this.users.push(user);
-    if (this.users.length === config.gameSession.MAX_PLAYERS) {
+
+    const userSocket = user.getUserSocket();
+
+    this.users.set(userSocket, user);
+
+    if (this.users.size === config.gameSession.MAX_PLAYERS) {
       matchStartNotification();
     }
   }
 
   getUser(socket) {
-    return this.users.find((user) => user.socket === socket);
+    return this.users.get(socket);
   }
 
   removeUser(socket) {
-    this.users = this.users.filter((user) => user.socket !== socket);
-    this.intervalManager.removePlayer(socket);
+    this.users.delete(socket);
 
-    if (this.users.length < config.gameSession.MAX_PLAYERS) {
+    if (this.users.size < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
     }
+    if (this.users.size === 0) {
+      removeGameSession(this.id);
+    }
+
+    return this.users.size;
   }
 
   addMonster(monster) {
@@ -47,13 +59,11 @@ class Game {
     this.monsters = this.monsters.filter((monster) => monster.id !== monsterId);
   }
 
-  getMaxLatency() {
-    let maxLatency = 0;
-    this.users.forEach((user) => {
-      maxLatency = Math.max(maxLatency, user.latency);
-    });
+  checkIsTowerOwner(socket, towerId) {
+    const tower = this.towerManager.towers.get(towerId);
 
-    return maxLatency;
+    if (tower.socket === socket) return true;
+    else return false;
   }
 
   // 상대방한테만 브로드캐스트
