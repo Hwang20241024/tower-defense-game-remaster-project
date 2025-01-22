@@ -70,3 +70,4 @@ export default class Monster {
     return true;  // 검증 성공
   }
 }
+

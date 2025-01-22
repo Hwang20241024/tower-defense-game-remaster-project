@@ -9,8 +9,6 @@ export const PACKET_DATA = {
   PAYLOAD_LENGTH: 4,
 };
 
-
-
 export const PACKET_TYPE = {
   NONE: 0,
 
