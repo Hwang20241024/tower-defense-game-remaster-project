@@ -22,5 +22,6 @@ export const config = {
   ingame: {
     offset: 2,
     towerPower: 40,
+    baseHp: 100,
   },
 };
