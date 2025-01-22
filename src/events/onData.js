@@ -1,5 +1,3 @@
-import { config } from '../config/config.js';
-import { PACKET_TYPE } from '../constants/header.js';
 import { getHandlerById } from '../handlers/index.js';
 import { packetParser } from '../utils/parser/packetParser.js';
 
