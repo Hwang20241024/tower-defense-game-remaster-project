@@ -42,7 +42,7 @@ export const towerAttackHandler = ({ socket, payload }) => {
 
   monster.hp -= config.ingame.towerPower;
 
-  const packet = enemyTowerAttackNotification(payload);
+  const packet = enemyTowerAttackNotification(payload, socket);
 
   session.broadcast(packet, socket);
 };
