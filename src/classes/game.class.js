@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
+import TowerManager from './managers/tower.manager.js';
 
 class Game {
   constructor() {
     this.users = [];
     this.monsters = [];
+    this.towerManager = new TowerManager();
     this.id = uuidv4();
   }
 
@@ -42,6 +44,13 @@ class Game {
 
   removeMonster(monsterId) {
     this.monsters = this.monsters.filter((monster) => monster.id !== monsterId);
+  }
+
+  checkIsTowerOwner(socket, towerId) {
+    const towerUser = this.intervalManager.get(towerId).getUserSocket();
+
+    if(towerUser === socket) return true;
+    else return false;
   }
 
   getMaxLatency() {

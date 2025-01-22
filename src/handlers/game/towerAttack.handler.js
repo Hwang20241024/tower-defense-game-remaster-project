@@ -27,7 +27,7 @@ export const towerAttackHandler = ({ socket, payload }) => {
 
   // towerId, monsterId가 유효한지 검증
   // 1. 해당 타워를 사용자가 소유 중인가?
-  const tower = user.towerData.find((data) => data.towerId === towerId);
+  const tower = gameSession.checkIsTowerOwner(socket, towerId);
 
   if (!tower) {
     throw CustomError(ErrorCodes.INVALID_PACKET, '사용자가 보유 중인 타워가 아닙니다.');

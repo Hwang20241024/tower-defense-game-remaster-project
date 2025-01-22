@@ -1,16 +1,15 @@
 import Tower from '../models/tower.class.js';
 
 class TowerManager {
-  constructor(socket) {
-    this.socket = socket;
+  constructor() {
     this.curId = 1;
     this.towers = new Map();
   }
 
-  addTower(x, y) {
+  addTower(socket, x, y) {
     const id = this.curId;
     this.curId += 1;
-    const tower = new Tower(id, x, y);
+    const tower = new Tower(id, socket, x, y);
     this.towers.set(id, tower);
   }
 
