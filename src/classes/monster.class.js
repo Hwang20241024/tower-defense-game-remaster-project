@@ -10,7 +10,7 @@ export default class Monster {
 
   constructor() {
     if (Monster.instance) {
-      throw new Error('UserManager는 싱글턴 클래스입니다. getInstance()를 사용하세요.');
+      throw new Error('MonsterManager는 싱글턴 클래스입니다. getInstance()를 사용하세요.');
     }
     this.monsters = {};
     Monster.instance = this; // 인스턴스를 static 변수에 저장
@@ -35,7 +35,7 @@ export default class Monster {
     }
 
     // 몬스터 맵핑
-    this.monsters[monsterId] = monsterInfo;
+    this.monsters[lower32Bits] = monsterInfo;
   };
 
   // 몬스터 삭제.
@@ -52,6 +52,8 @@ export default class Monster {
     if (!this.validateKey(monsterId)) {
       return;
     }
+
+    // 
     
     return this.monsters[monsterId];
   }
