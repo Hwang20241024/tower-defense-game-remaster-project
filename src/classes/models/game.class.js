@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { config } from '../config/config.js';
+import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
 import { removeGameSession } from '../../session/game.session.js';
-import { getUserBySocket } from '../../session/user.session.js';
 
 class Game {
   constructor() {
