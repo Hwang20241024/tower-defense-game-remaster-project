@@ -1,4 +1,4 @@
-import { gameSessions } from './sessions.js';
+import { gameSessions } from './session.js';
 import Game from '../classes/game.class.js';
 import { config } from '../config/config.js';
 
@@ -35,5 +35,8 @@ export const getAllGameSessions = () => {
 };
 
 export const getEnableGameSession = () => {
-  return gameSessions.find((session) => session.users.length < config.gameSession.MAX_PLAYERS);
+  // 참여 가능한 게임을 찾는다. 참여 가능한 게임이 없으면 새로운 게임을 생성한다.
+  const game = gameSessions.find((session) => session.users.length < config.gameSession.MAX_PLAYERS);
+  if (!game) game = addGameSession();
+  return game;
 };
