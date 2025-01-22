@@ -20,7 +20,7 @@ export default class MonsterManager {
   }
 
   // 몬스터 세션 생성.
-  addSessionMonster(gameId) {
+  addSession(gameId) {
     if (!this.monsters[gameId]) {
       this.monsters[gameId] = new Map();
     }
@@ -37,16 +37,23 @@ export default class MonsterManager {
   // 몬스터 삭제.
   removeMonster(gameId, monsterId) {
     if (this.#validateSessionKey(gameId)) {
-      if(this.#validateMonsterKey(gameId, monsterId)){
+      if (this.#validateMonsterKey(gameId, monsterId)) {
         this.monsters[gameId].delete(monsterId); // Map에서 삭제
       }
+    }
+  }
+
+  // 몬스터 세션 삭제
+  removeSession(gameId) {
+    if (this.#validateSessionKey(gameId)) {
+      delete this.monsters[gameId]; // 세션을 삭제
     }
   }
 
   // 특정 몬스터 찾기.
   getMonster(gameId, monsterId) {
     if (this.#validateSessionKey(gameId)) {
-      if(this.#validateMonsterKey(gameId, monsterId)){
+      if (this.#validateMonsterKey(gameId, monsterId)) {
         return this.monsters[gameId].get(monsterId); // 특정 몬스터 반환
       }
     }
@@ -79,5 +86,4 @@ export default class MonsterManager {
     }
     return true; // 검증 성공
   }
-
 }

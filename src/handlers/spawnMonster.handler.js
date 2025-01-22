@@ -22,7 +22,7 @@ const spawnMonsterHandler = async (socket, payload) => {
   }
 
   // 몬스터가 저장될 세션이 없다면추가 있으면 생략.
-  MonsterManager.getInstance().addSessionMonster(gameId);
+  MonsterManager.getInstance().addSession(gameId);
 
   // 몬스터 추가.
   MonsterManager.getInstance().addMonsterToSession(gameId, lower32Bits, monsterNumber, 1);
