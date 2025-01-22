@@ -31,6 +31,7 @@ export const config = {
   ingame: {
     offset: 2,
     towerPower: 40,
+    baseHp: 100,
   },
   databases: {
     CH5_TEAM: {
