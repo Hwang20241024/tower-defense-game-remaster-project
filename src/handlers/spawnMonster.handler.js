@@ -28,7 +28,7 @@ const spawnMonsterHandler = async (socket, payload) => {
   const payloadData = response.encode(gamePacket).finish();
 
   // "헤더 + 페이로드" 직렬화.
-  const initialResponse = createResponse(PACKET_TYPE.SPAWN_MONSTER_RESPONSE, 0, payloadData);
+  const initialResponse = createResponse(PACKET_TYPE.SPAWN_MONSTER_RESPONSE, gameId.sequence, payloadData);
 
   socket.write(initialResponse);
 
