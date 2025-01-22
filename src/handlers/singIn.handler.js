@@ -37,19 +37,28 @@ const singInHandler = async (socket, payload, sequence) => {
   // 4. JWT 토큰 생성
   const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
-  // 5. Response
+  // 5. 유저 세션 추가
+  const userSession = addUser(socket, sequence);
+
+  // 6. Response
   const protoMessages = getProtoMessages();
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
     loginResponse: { success: true, message: '로그인 성공', token, failCode: 0 },
   });
   const responsePayload = response.encode(gamePacket).finish();
-  const responsePacket = createResponse(PACKET_TYPE.LOGIN_RESPONSE, ++sequence, responsePayload);
 
-  // 6. 유저 세션 추가
-  addUser(socket);
+  try {
+    const responsePacket = createResponse(
+      PACKET_TYPE.LOGIN_RESPONSE,
+      userSession.getNextSequence(sequence),
+      responsePayload,
+    );
 
-  socket.write(responsePacket);
+    socket.write(responsePacket);
+  } catch (e) {
+    handleError(e);
+  }
 };
 
 export default singInHandler;

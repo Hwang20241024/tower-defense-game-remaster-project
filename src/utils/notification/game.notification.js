@@ -12,12 +12,13 @@ export const enemyTowerAttackNotification = (data, socket) => {
   }
 
   const protoMessages = getProtoMessages();
-  const enemyTowerAttack = protoMessages.towerDefense.S2CEnemyTowerAttackNotification;
 
-  const payload = data;
-  const message = enemyTowerAttack.create(payload);
+  const response = protoMessages.towerDefense.GamePacket;
+  const gamePacket = response.create({
+    S2CEnemyTowerAttackNotification: data,
+  });
 
-  const enemyTowerAttackPacket = enemyTowerAttack.encode(message).finish();
+  const enemyTowerAttackPacket = response.encode(gamePacket).finish();
 
   // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
   return createResponse(
@@ -25,4 +26,44 @@ export const enemyTowerAttackNotification = (data, socket) => {
     user.sequence,
     enemyTowerAttackPacket,
   );
+};
+
+export const updateBaseHPNotification = (data, socket) => {
+  // 소켓을 통해 유저 객체 불러오기
+  const user = getUserBySocket(socket);
+  if (!user) {
+    throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+  }
+
+  const protoMessages = getProtoMessages();
+
+  const response = protoMessages.towerDefense.GamePacket;
+  const gamePacket = response.create({
+    S2CUpdateBaseHPNotification: data,
+  });
+
+  const updateBaseHPPacket = response.encode(gamePacket).finish();
+
+  // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+  return createResponse(PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, user.sequence, updateBaseHPPacket);
+};
+
+export const gameOverNotification = (data, socket) => {
+  // 소켓을 통해 유저 객체 불러오기
+  const user = getUserBySocket(socket);
+  if (!user) {
+    throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+  }
+
+  const protoMessages = getProtoMessages();
+
+  const response = protoMessages.towerDefense.GamePacket;
+  const gamePacket = response.create({
+    S2CGameOverNotification: data,
+  });
+
+  const gameOverPacket = response.encode(gamePacket).finish();
+
+  // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+  return createResponse(PACKET_TYPE.GAME_OVER_NOTIFICATION, user.sequence, gameOverPacket);
 };

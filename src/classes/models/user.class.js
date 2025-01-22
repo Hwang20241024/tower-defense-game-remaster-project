@@ -1,8 +1,12 @@
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import CustomError from '../../utils/error/customError.js';
+
 class User {
-  constructor(socket) {
+  constructor(socket, sequence) {
     this.socket = socket;
-    this.sequence = 0;
+    this.sequence = sequence;
     this.baseHp = 100;
+    this.score = 0;
   }
 
   setGameId(gameId) {
@@ -15,6 +19,18 @@ class User {
 
   getUserSocket() {
     return this.socket;
+  }
+
+  getSequence() {
+    return this.sequence;
+  }
+
+  getNextSequence(sequence) {
+    console.log(sequence, this.sequence);
+    if (this.sequence !== sequence) {
+      throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 Sequence 입니다.');
+    }
+    return ++this.sequence;
   }
 }
 
