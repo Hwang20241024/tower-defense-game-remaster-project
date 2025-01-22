@@ -1,4 +1,4 @@
-import Monster from '../models/monster.class';
+import Monster from '../models/monster.class.js';
 
 export default class MonsterManager {
   constructor() {
