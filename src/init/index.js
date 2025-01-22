@@ -6,6 +6,7 @@ const initServer = async () => {
   try {
     // 초기화
     await loadProtos();     // 프로토파일 읽기.
+
     // 초기화 작업 추가.
 
   } catch (e) {
