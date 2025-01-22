@@ -2,12 +2,10 @@ import { CLIENT_VERSION } from '../../constants/env.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 
-let sequence = 0;
-
 // 패킷 헤더 만들어주는 함수
 const makeNotification = (message, type) => {
   // 패킷 타입 정보를 포함한 버퍼 생성
-  const packetType = Buffer.alloc(0);
+  const packetType = Buffer.alloc(PACKET_DATA.PACKET_TYPE_LENGTH);
   packetType.writeUInt8(type, 0);
 
   const version = CLIENT_VERSION;
@@ -32,6 +30,7 @@ const makeNotification = (message, type) => {
   return packetBuffer;
 };
 
+// 패킷의 페이로드 부분을 바이트로 직렬화 하는 부분
 export const enemyTowerAttackNotification = (data) => {
   const protoMessages = getProtoMessages();
   const enemyTowerAttack = protoMessages.towerDefense.S2CEnemyTowerAttackNotification;
