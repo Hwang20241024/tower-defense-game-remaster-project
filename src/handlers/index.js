@@ -3,8 +3,10 @@ import { PACKET_TYPE } from '../constants/header.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import CustomError from '../utils/error/customError.js';
 import spawnMonsterHandler from './spawnMonster.handler.js';
+import { matchHandler } from './match.handler.js';
 import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler.js';
 import { towerAttackHandler } from './game/towerAttack.handler.js';
+import purchaseTowerHandler from './game/purchaseTower.handler.js';
 
 const handlers = {
   // 다른 핸들러들을 추가
@@ -20,6 +22,10 @@ const handlers = {
     handler: spawnMonsterHandler, // 이거 테스트니깐 수정해야함
     protoType: 'towerDefense.C2SLoginRequest',
   },
+  [PACKET_TYPE.LOGIN_REQUEST]: {
+    handler: matchHandler, // 이거 테스트니깐 수정해야함
+    protoType: 'towerDefense.C2SMatchRequest',
+  },
   [PACKET_TYPE.MONSTER_ATTACK_BASE_REQUEST]: {
     handler: monsterAttackBaseHandler,
     protoType: 'towerDefense.C2SMonsterAttackBaseRequest',
@@ -27,6 +33,10 @@ const handlers = {
   [PACKET_TYPE.TOWER_ATTACK_REQUEST]: {
     handler: towerAttackHandler,
     protoType: 'towerDefense.C2STowerAttackRequest',
+  },
+  [PACKET_TYPE.TOWER_PURCHASE_REQUEST]: {
+    handler: purchaseTowerHandler,
+    protoType: 'towerDefense.C2STowerPurchaseRequest',
   },
 };
 

@@ -1,5 +1,5 @@
 import { gameSessions } from './sessions.js';
-import Game from '../classes/game.class.js';
+import Game from '../classes/models/game.class.js';
 import { config } from '../config/config.js';
 
 export const addGameSession = () => {
