@@ -7,6 +7,10 @@ class User {
   setGameId(gameId) {
     this.gameId = gameId;
   }
+
+  getUserSocket() {
+    return this.socket;
+  }
 }
 
 export default User;
