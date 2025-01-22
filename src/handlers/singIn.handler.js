@@ -9,10 +9,11 @@ import { TOKEN_SECRET_KEY } from '../constants/env.js';
 import { handleError } from '../utils/error/errorHandler.js';
 import { packetNames as protoMessages } from '../protobuf/packetNames.js';
 import { getProtoMessages } from '../init/loadProtos.js';
+import { addUser, getUserBySocket } from '../session/user.session.js';
 
 const singInHandler = async (socket, payload, sequence) => {
   const { id, password } = payload;
-  console.log('#singInHandler');
+
   // 1. Paylaod 유효성 검사.
   if (!id) {
     throw new CustomError(ErrorCodes.INVALID_VALUE, '아이디는 필수 입력 입니다.');
@@ -44,6 +45,10 @@ const singInHandler = async (socket, payload, sequence) => {
   });
   const responsePayload = response.encode(gamePacket).finish();
   const responsePacket = createResponse(PACKET_TYPE.LOGIN_RESPONSE, ++sequence, responsePayload);
+
+  // 6. 유저 세션 추가
+  addUser(socket);
+
   socket.write(responsePacket);
 };
 
