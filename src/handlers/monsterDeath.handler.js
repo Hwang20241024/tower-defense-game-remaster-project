@@ -8,10 +8,8 @@ const monsterDeathHandler = async (socket, monsterId) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    payload: {
-      enemyMonsterDeathNotification: {
-        monsterId: monster.monsterId,
-      },
+    enemyMonsterDeathNotification: {
+      monsterId: monster.monsterId,
     },
   });
 
