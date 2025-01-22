@@ -4,6 +4,7 @@ import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { getGameSession } from '../../session/game.session.js';
 
 export const towerAttackHandler = ({ socket, payload }) => {
   // 패킷 파서(혹은 onData)에서 버전 검증
@@ -15,26 +16,23 @@ export const towerAttackHandler = ({ socket, payload }) => {
     throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
   }
 
-  let gameSession = {
-    monsters: [
-      { id: 1, hp: 100 },
-      { id: 2, hp: 150 },
-    ],
-  }; // 유저 객체를 통해 게임 세션을 구해왔다고 가정(대충 이런 형식을 취하고 있을 것이다.)
+  // 유저를 통해 게임 세션 불러오기
+  const gameId = user.getGameId();
+  const session = getGameSession(gameId);
 
   // 유저 객체의 형태(가정)
   // user = { towerData: [{ towerId: 1, x: 3, y: 10 }, { towerId: 2, x: 5, y: 10 }] };
 
   // towerId, monsterId가 유효한지 검증
   // 1. 해당 타워를 사용자가 소유 중인가?
-  const tower = gameSession.checkIsTowerOwner(socket, towerId);
+  const tower = session.checkIsTowerOwner(socket, towerId);
 
   if (!tower) {
     throw CustomError(ErrorCodes.INVALID_PACKET, '사용자가 보유 중인 타워가 아닙니다.');
   }
 
   // 2. 몬스터가 세션에 존재하는가?
-  const monster = gameSession.monsters.find((monster) => monster.id === monsterId);
+  const monster = session.monsters.find((monster) => monster.id === monsterId);
 
   if (!monster) {
     throw CustomError(ErrorCodes.INVALID_PACKET, '세션에 존재하지 않는 몬스터입니다.');
@@ -44,9 +42,9 @@ export const towerAttackHandler = ({ socket, payload }) => {
 
   monster.hp -= config.ingame.towerPower;
 
-  const packet = enemyTowerAttackNotification(payload);
+  const packet = enemyTowerAttackNotification(payload, socket);
 
-  gameSession.broadcast(packet, socket);
+  session.broadcast(packet, socket);
 };
 
 // !!! 시간이 남아돌면 해보기 !!!

@@ -3,17 +3,14 @@ import { userSessions } from './session.js';
 
 export const addUser = (socket) => {
   const user = new User(socket);
-  userSessions.push(user);
+  userSessions.set(socket, user);
   return user;
 };
 
 export const removeUser = (socket) => {
-  const index = userSessions.findIndex((user) => user.socket === socket);
-  if (index !== -1) {
-    return userSessions.splice(index, 1)[0];
-  }
+  userSessions.delete(socket);
 };
 
 export const getUserBySocket = (socket) => {
-  return userSessions.find((user) => user.socket === socket);
+  return userSessions.get(socket);
 };
