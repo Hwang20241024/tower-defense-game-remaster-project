@@ -46,7 +46,7 @@ export const towerAttackHandler = ({ socket, payload }) => {
 
   const packet = enemyTowerAttackNotification(payload);
 
-  gameSession.broadcast(packet);
+  gameSession.broadcast(packet, socket);
 };
 
 // !!! 시간이 남아돌면 해보기 !!!

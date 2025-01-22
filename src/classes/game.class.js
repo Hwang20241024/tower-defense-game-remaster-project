@@ -53,9 +53,12 @@ class Game {
     return maxLatency;
   }
 
-  broadcast(packet) {
+  // 상대방한테만 브로드캐스트
+  broadcast(packet, socket) {
     this.users.forEach((user) => {
-      user.socket.write(packet);
+      if (user.socket !== socket) {
+        user.socket.write(packet);
+      }
     });
   }
 }
