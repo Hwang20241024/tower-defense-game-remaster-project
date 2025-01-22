@@ -1,12 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
+import MonsterManager from '../managers/monster.manager.js';
 import { removeGameSession } from '../../session/game.session.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 class Game {
   constructor() {
     this.users = new Map();
-    this.monsters = [];
+    this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
     this.id = uuidv4();
   }
@@ -25,7 +28,7 @@ class Game {
     this.users.set(userSocket, user);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
-      matchStartNotification();
+      this.matchStartNotification();
     }
   }
 
@@ -46,16 +49,18 @@ class Game {
     return this.users.size;
   }
 
-  addMonster(monster) {
-    this.monsters.push(monster);
+  // 수정해야합니다. 레벨 
+  addMonster(level) {
+    this.monsterManager.addMonster(this.id, level); 
   }
 
   getMonster(monsterId) {
-    return this.monsters.find((monster) => monster.id === monsterId);
+    const findMonsters = this.monsterManager.getMonstersArr();
+    return findMonsters.find((monster) => monster.id === monsterId);
   }
 
   removeMonster(monsterId) {
-    this.monsters = this.monsters.filter((monster) => monster.id !== monsterId);
+    this.monsterManager.removeMonster(monsterId);
   }
 
   checkIsTowerOwner(socket, towerId) {
@@ -76,55 +81,66 @@ class Game {
 
   // 매치가 시작되었음을 알림
   matchStartNotification() {
+    // 게임에 있는 모든 유저에게 데이터 전송
+    for (var [socket, user] of this.users) {
+      // 초기 상태
+      const initialGameState = {
+        baseHp: 100,
+        towerCost: 100,
+        initialGold: 100,
+        monsterSpawnInterval: 1,
+      };
 
-    const initialGameState = {
-      baseHp: 100,
-      towerCost: 100,
-      initialGold: 100,
-      monsterSpawnInterval: 1,
-    };
+      const towerDatas = [];
+      const monsterDatas = [];
+      const monsterPaths = [];
 
-    const towerDatas = [];
-    const monsterDatas = [];
-    const monsterPaths = [];
+      // 내 데이터
+      const playerData = {
+        gold: 100,
+        base: {
+          hp: 100,
+          maxHp: 100,
+        },
+        highScore: 0,
+        towers: towerDatas,
+        monsters: monsterDatas,
+        monsterLevel: 0,
+        score: 0,
+        monsterPath: monsterPaths,
+        basePosition: {
+          x: 0,
+          y: 0,
+        },
+      }
 
-    const playerData = {
-      gold: 100,
-      base: {
-        hp: 100,
-        maxHp: 100,
-      },
-      highScore: 0,
-      towers: towerDatas,
-      monsters: monsterDatas,
-      monsterLevel: 0,
-      score: 0,
-      monsterPath: monsterPaths,
-      basePosition: {
-        x: 0,
-        y: 0,
-      },
+      // 상대 데이터
+      const opponentData = {
+        gold: 100,
+        base: {
+          hp: 100,
+          maxHp: 100,
+        },
+        highScore: 0,
+        towers: towerDatas,
+        monsters: monsterDatas,
+        monsterLevel: 0,
+        score: 0,
+        monsterPath: monsterPaths,
+        basePosition: {
+          x: 0,
+          y: 0,
+        },
+      }
+
+      const matchStartNotificationResponse = createResponse(
+        PACKET_TYPE.MATCH_START_NOTIFICATION,
+        user.sequence,
+        { initialGameState, playerData, opponentData, message: 'match start' },
+      );
+
+      this.broadcast(matchStartNotificationResponse, socket);
     }
-
-    const opponentData = {
-      gold: 100,
-      base: {
-        hp: 100,
-        maxHp: 100,
-      },
-      highScore: 0,
-      towers: towerDatas,
-      monsters: monsterDatas,
-      monsterLevel: 0,
-      score: 0,
-      monsterPath: monsterPaths,
-      basePosition: {
-        x: 0,
-        y: 0,
-      },
-    }
-
-    // return { initialGameState, playerData, opponentData };
   }
 
   // 내 상태를 알림

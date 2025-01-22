@@ -6,6 +6,7 @@ class User {
     this.socket = socket;
     this.sequence = sequence;
     this.baseHp = 100;
+    this.score = 0;
   }
 
   setGameId(gameId) {
