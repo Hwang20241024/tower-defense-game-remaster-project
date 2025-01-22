@@ -13,3 +13,6 @@ export const DB_USER = process.env.DB_USER || 'user1';
 export const DB_PASSWORD = process.env.DB_PASSWORD || 'password1';
 export const DB_HOST = process.env.DB_HOST || 'localhost';
 export const DB_PORT = process.env.DB_PORT || 3306;
+
+// JWT
+export const TOKEN_SECRET_KEY = process.env.TOKEN_SECRET_KEY || 'custom_secret_key';
