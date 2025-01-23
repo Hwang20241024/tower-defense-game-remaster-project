@@ -67,7 +67,7 @@ export const monsterAttackBaseHandler = (socket, payload) => {
     const losePacketToMe = gameOverNotification(loseToMe, socket);
     const winPacketToOpponent = gameOverNotification(winToOpponent, socket);
 
-    socket.write(losePacketToMe, socket);
+    socket.write(losePacketToMe);
     session.broadcast(winPacketToOpponent, socket);
 
     // 게임 승패가 결정되는 동시에 게임 종료 작업
