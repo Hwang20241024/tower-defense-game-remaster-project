@@ -110,11 +110,7 @@ class Game {
     // 유저 데이터 초기화
     for (var [socket, user] of this.users) {
       // 유저 상태 동기화 인터벌 추가
-
-      console.log(this.intervalManager);
       this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
-
-      console.log('인터벌 추가');
 
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
