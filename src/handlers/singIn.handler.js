@@ -42,7 +42,7 @@ const singInHandler = async (socket, payload, sequence) => {
   const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
   // 5. 유저 세션 추가
-  const userSession = addUser(socket, sequence);
+  const userSession = addUser(socket, user.id, user.score, sequence);
 
   // 6. Response
   const protoMessages = getProtoMessages();

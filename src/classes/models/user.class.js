@@ -2,7 +2,8 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import CustomError from '../../utils/error/customError.js';
 
 class User {
-  constructor(socket, sequence) {
+  constructor(socket, userId, highScore, sequence) {
+    this.userId = userId, // string
     this.socket = socket;
     this.sequence = sequence;
     this.baseHp = 100;
@@ -11,7 +12,7 @@ class User {
     this.towers = [];
     this.monsters = [];
     this.monsterLevel = 0;
-    this.highScore = 0;
+    this.highScore = highScore;
   }
 
   setGameId(gameId) {

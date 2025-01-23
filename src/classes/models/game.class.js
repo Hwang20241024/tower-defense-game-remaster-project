@@ -120,7 +120,7 @@ class Game {
       const monsterDatas = [];
 
       // 유저 하이스코어 로드
-      const highScore = 0;
+      const highScore = user.highScore;
 
       const userData = {
         gold: config.ingame.initialGold,
