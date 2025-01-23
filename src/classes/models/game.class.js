@@ -7,12 +7,14 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
+import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
+    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -51,7 +53,7 @@ class Game {
     return this.users.size;
   }
 
-  // 수정해야합니다. 레벨 
+  // 수정해야합니다. 레벨
   addMonster(level) {
     this.monsterManager.addMonster(this.id, level);
   }
@@ -103,8 +105,13 @@ class Game {
 
     const userDatas = new Map();
 
+    console.log('매칭 시작 안내');
+
     // 유저 데이터 초기화
-    for(var [socket, user] of this.users){
+    for (var [socket, user] of this.users) {
+      // 유저 상태 동기화 인터벌 추가
+      this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
       var _y = 350;
@@ -138,21 +145,23 @@ class Game {
           x: 1400,
           y: _y,
         },
-      }
+      };
 
       userDatas.set(user, userData);
     }
 
+    console.log('유저 전송 전');
+
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const GamePacket = protoMessages.towerDefense.GamePacket;
 
         // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
         let playerData, opponentData;
-        for(const [key, value] of userDatas){
-          if(key === user) playerData = value;
+        for (const [key, value] of userDatas) {
+          if (key === user) playerData = value;
           else opponentData = value;
         }
 
@@ -161,8 +170,8 @@ class Game {
           matchStartNotification: {
             initialGameState,
             playerData,
-            opponentData
-          }
+            opponentData,
+          },
         };
 
         // 페이로드 검증
@@ -187,6 +196,7 @@ class Game {
   }
 
   // 내 상태를 알림
+
   stateSyncNotification() {
     const towerDatas = [];
     const monsterDatas = [];
@@ -198,7 +208,7 @@ class Game {
       score: 0,
       TowerData: towerDatas,
       MonsterData: monsterDatas,
-    }
+    };
   }
 }
 
