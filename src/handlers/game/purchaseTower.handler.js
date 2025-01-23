@@ -5,6 +5,7 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
 
 const purchaseTowerHandler = async (socket, payload) => {
   try {
@@ -24,10 +25,13 @@ const purchaseTowerHandler = async (socket, payload) => {
 
     // 타워 생성
     const towerId = game.towerManager.addTower(socket, x, y);
+    user.towers.push(towerId);
 
+    const protoMessages = getProtoMessages();
     const response = protoMessages.towerDefense.GamePacket;
     const responseGamePacket = response.create({
-      towerPurchaseResponse: { towerId, message: '타워가 생성되었습니다.' },
+      // towerPurchaseResponse: { towerId, message: '타워가 생성되었습니다.' },
+      towerPurchaseResponse: { towerId },
     });
 
     const responsePayLoad = response.encode(responseGamePacket).finish();

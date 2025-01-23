@@ -10,4 +10,5 @@ export const matchHandler = (socket, payload) => {
     
     game.addUser(user);
     user.setGameId(game.getGameId());
+    
 }

@@ -7,12 +7,14 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
+import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
+    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -28,6 +30,7 @@ class Game {
     const userSocket = user.getUserSocket();
 
     this.users.set(userSocket, user);
+    // this.intervalManager.addPlayer(user.socket, user.syncState.bind(user), 100);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
@@ -51,7 +54,7 @@ class Game {
     return this.users.size;
   }
 
-  // 수정해야합니다. 레벨 
+  // 수정해야합니다. 레벨
   addMonster(level) {
     this.monsterManager.addMonster(this.id, level);
   }
@@ -103,7 +106,6 @@ class Game {
 
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
-
       const towerDatas = [];
       const monsterDatas = [];
       // 몬스터 패스 생성: 가로 간격 30, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
@@ -132,7 +134,7 @@ class Game {
           x: 1400,
           y: _y,
         },
-      }
+      };
 
       // 상대 데이터
       const opponentData = {
@@ -151,17 +153,17 @@ class Game {
           x: 1400,
           y: _y,
         },
-      }
+      };
 
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const GamePacket = protoMessages.towerDefense.GamePacket;
         const payload = {
           matchStartNotification: {
             initialGameState,
             playerData,
-            opponentData
-          }
+            opponentData,
+          },
         };
         const errMsg = GamePacket.verify(payload);
         if (errMsg) {
@@ -194,7 +196,7 @@ class Game {
       score: 0,
       TowerData: towerDatas,
       MonsterData: monsterDatas,
-    }
+    };
   }
 }
 
