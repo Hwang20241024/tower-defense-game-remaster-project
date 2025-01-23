@@ -9,6 +9,7 @@ const monsterDeathHandler = async (socket, payload) => {
   const gameId = getUserBySocket(socket);
   const gameSession = getGameSession(gameId.getGameId());
   gameSession.removeMonster(payload.monsterId);
+  gameId.addScore(100);
 
   // 페이로드 직렬화.
   const protoMessages = getProtoMessages();
@@ -28,6 +29,7 @@ const monsterDeathHandler = async (socket, payload) => {
     gameId.sequence,
     payloadData,
   );
+
 
   // socket.write(initialResponse);
 
