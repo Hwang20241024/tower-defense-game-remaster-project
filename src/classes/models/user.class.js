@@ -9,8 +9,11 @@ class User {
     this.sequence = sequence;
     this.baseHp = 100;
     this.score = 0;
-    this.userGold = 10;
-    this.monsterLevel = 1;
+    this.gold = 100;
+    this.towers = [];
+    this.monsters = [];
+    this.monsterLevel = 0;
+    this.highScore = 0;
   }
 
   setGameId(gameId) {
@@ -31,6 +34,10 @@ class User {
 
   getNextSequence() {
     return ++this.sequence;
+  }
+
+  getMonsterLevel() {
+    return this.monsterLevel
   }
 
   syncStateNotification() {
