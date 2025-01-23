@@ -1,4 +1,5 @@
 import { config } from '../../config/config.js';
+import { removeGameSession } from '../../session/game.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import {
@@ -61,5 +62,8 @@ export const monsterAttackBaseHandler = ({ socket, payload }) => {
 
     const packet = gameOverNotification(winToOpponent, socket);
     session.broadcast(packet, socket);
+
+    // 게임 승패가 결정되는 동시에 게임 종료 작업
+    removeGameSession(gameId);
   }
 };
