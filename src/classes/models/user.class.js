@@ -30,11 +30,7 @@ class User {
     return this.sequence;
   }
 
-  getNextSequence(sequence) {
-    console.log(sequence, this.sequence);
-    if (this.sequence !== sequence) {
-      throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 Sequence 입니다.');
-    }
+  getNextSequence() {
     return ++this.sequence;
   }
 }
