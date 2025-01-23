@@ -7,6 +7,11 @@ class User {
     this.sequence = sequence;
     this.baseHp = 100;
     this.score = 0;
+    this.gold = 100;
+    this.towers = [];
+    this.monsters = [];
+    this.monsterLevel = 0;
+    this.highScore = 0;
   }
 
   setGameId(gameId) {
