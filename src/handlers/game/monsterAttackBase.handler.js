@@ -1,6 +1,6 @@
 import { config } from '../../config/config.js';
 import { getGameSession, removeGameSession } from '../../session/game.session.js';
-import { getUserBySocket } from '../../session/user.session.js';
+import { getOpponentBySocket, getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import {
@@ -48,8 +48,6 @@ export const monsterAttackBaseHandler = (socket, payload) => {
     user.baseHp = 0;
   }
 
-  console.log('baseHp : ', user.baseHp);
-
   // S2CUpdateBaseHPNotification 패킷을 나와 상대방에게 전송하기
   const dataToMe = { isOpponent: false, baseHp: user.baseHp };
   const dataToOpponent = { isOpponent: true, baseHp: user.baseHp };
@@ -75,5 +73,10 @@ export const monsterAttackBaseHandler = (socket, payload) => {
     removeGameSession(gameId);
     session.intervalManager.clearAll();
     // user.setGameId(null);
+
+    // 나와 상대 유저의 객체를 초기화하기!!!
+    user.resetUser();
+    const opponent = getOpponentBySocket(gameId, socket);
+    opponent.resetUser();
   }
 };
