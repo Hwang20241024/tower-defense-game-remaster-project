@@ -35,20 +35,6 @@ class User {
     return ++this.sequence;
   }
 
-  syncState(socket) {
-    const payload = {
-      userGold: this.gold,
-      baseHp: this.baseHp,
-      monsterLevel: this.monsterLevel,
-      score: this.score,
-      towerData: this.towers,
-      mosterData: this.monsters,
-    };
-
-    const packet = stateSyncNotification(payload, this.socket);
-    socket.write(packet);
-  }
-
   getMonsterLevel() {
     return this.monsterLevel;
   }

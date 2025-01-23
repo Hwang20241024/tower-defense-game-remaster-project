@@ -7,14 +7,12 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
-import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
-    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -30,7 +28,6 @@ class Game {
     const userSocket = user.getUserSocket();
 
     this.users.set(userSocket, user);
-    this.intervalManager.addPlayer(user.socket, user.syncState(user.socket).bind(user), 100);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
@@ -107,7 +104,7 @@ class Game {
     const userDatas = new Map();
 
     // 유저 데이터 초기화
-    for(var [socket, user] of this.users){
+    for (var [socket, user] of this.users) {
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
       var _y = 350;
@@ -154,8 +151,8 @@ class Game {
 
         // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
         let playerData, opponentData;
-        for(const [key, value] of userDatas){
-          if(key === user) playerData = value;
+        for (const [key, value] of userDatas) {
+          if (key === user) playerData = value;
           else opponentData = value;
         }
 

@@ -1,5 +1,6 @@
 import { config } from '../../config/config.js';
-import { removeGameSession } from '../../session/game.session.js';
+import { getGameSession, removeGameSession } from '../../session/game.session.js';
+import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import {
@@ -8,16 +9,15 @@ import {
 } from '../../utils/notification/game.notification.js';
 
 // 나와 상대를 가리지 않고 몬스터가 베이스를 공격하면 도착하는 패킷
-export const monsterAttackBaseHandler = ( socket, payload ) => {
-  console.log('패킷 도착?!?!');
+export const monsterAttackBaseHandler = (socket, payload) => {
   // 패킷 파서(혹은 onData)에서 버전 검증
   const { damage } = payload;
 
   // 소켓을 통해 유저 객체 불러오기
   const user = getUserBySocket(socket);
-  if (!user) {
-    // throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-  }
+  // if (!user) {
+  //   // throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+  // }
   // 유저를 통해 게임 세션 불러오기
   const gameId = user.getGameId();
   const session = getGameSession(gameId);
@@ -46,6 +46,8 @@ export const monsterAttackBaseHandler = ( socket, payload ) => {
   if (user.baseHp <= 0) {
     user.baseHp = 0;
   }
+
+  console.log('baseHp : ', user.baseHp);
 
   // S2CUpdateBaseHPNotification 패킷을 나와 상대방에게 전송하기
   const dataToMe = { isOpponent: false, baseHp: user.baseHp };

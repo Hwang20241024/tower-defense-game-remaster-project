@@ -34,7 +34,7 @@ export const config = {
     baseHp: 100,
     initialGold: 100,
     towerCost: 100,
-    monsterInterval: 1,
+    monsterInterval: 3,
   },
   databases: {
     CH5_TEAM: {
