@@ -61,13 +61,17 @@ export const monsterAttackBaseHandler = (socket, payload) => {
 
   // 내 baseHp가 0보다 작아졌다면 상대방에게 승리 패킷 보내기
   if (user.baseHp === 0) {
+    const loseToMe = { isWin: false };
     const winToOpponent = { isWin: true };
 
-    const packet = gameOverNotification(winToOpponent, socket);
-    session.broadcast(packet, socket);
+    const losePacketToMe = gameOverNotification(loseToMe, socket);
+    const winPacketToOpponent = gameOverNotification(winToOpponent, socket);
+
+    socket.write(losePacketToMe, socket);
+    session.broadcast(winPacketToOpponent, socket);
 
     // 게임 승패가 결정되는 동시에 게임 종료 작업
     removeGameSession(gameId);
-    user.setGameId(null);
+    // user.setGameId(null);
   }
 };
