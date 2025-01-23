@@ -105,10 +105,16 @@ class Game {
 
     const userDatas = new Map();
 
+    console.log('매칭 시작 안내');
+
     // 유저 데이터 초기화
-    for(var [socket, user] of this.users){
+    for (var [socket, user] of this.users) {
       // 유저 상태 동기화 인터벌 추가
-      this.intervalManager.addPlayer(socket, user.syncStateNotification(), 100);
+
+      console.log(this.intervalManager);
+      this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+
+      console.log('인터벌 추가');
 
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
@@ -148,6 +154,8 @@ class Game {
       userDatas.set(user, userData);
     }
 
+    console.log('유저 전송 전');
+
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
       try {
@@ -156,8 +164,8 @@ class Game {
 
         // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
         let playerData, opponentData;
-        for(const [key, value] of userDatas){
-          if(key === user) playerData = value;
+        for (const [key, value] of userDatas) {
+          if (key === user) playerData = value;
           else opponentData = value;
         }
 

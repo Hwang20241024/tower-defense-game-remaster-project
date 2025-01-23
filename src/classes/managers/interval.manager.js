@@ -1,4 +1,4 @@
-class IntervalManager extends BaseManager {
+class IntervalManager {
   constructor() {
     this.intervals = new Map();
   }

@@ -3,6 +3,7 @@ import CustomError from '../../utils/error/customError.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { config } from '../../config/config.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 class User {
   constructor(socket, sequence) {
@@ -70,13 +71,13 @@ class User {
 
     const notificationPayload = notification.encode(notificationGamePacket).finish();
 
-    const towerPurchaseResponse = createResponse(
+    const syncStateNotification = createResponse(
       PACKET_TYPE.STATE_SYNC_NOTIFICATION,
       this.sequence,
       notificationPayload,
     );
 
-    this.socket.write(towerPurchaseResponse);
+    this.socket.write(syncStateNotification);
   }
 }
 
