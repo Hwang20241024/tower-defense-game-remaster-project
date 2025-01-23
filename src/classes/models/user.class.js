@@ -34,6 +34,9 @@ class User {
   }
 
   syncStateNotification() {
+    const towerDatas = [];
+    const monsterDatas = [];
+
     const protoMessages = getProtoMessages();
     const notification = protoMessages.towerDefense.GamePacket;
     const notificationGamePacket = notification.create({
@@ -42,7 +45,9 @@ class User {
         baseHp: this.baseHp,
         monsterLevel: this.monsterLevel,
         score: this.score,
-        message: '타워가 생성되었습니다.',
+        TowerData: towerDatas,
+        MonsterData: monsterDatas,
+        message: '상태 동기화 패킷입니다.',
       },
     });
 

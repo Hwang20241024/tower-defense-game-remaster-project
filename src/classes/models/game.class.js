@@ -6,12 +6,14 @@ import { removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
+import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
+    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -50,9 +52,9 @@ class Game {
     return this.users.size;
   }
 
-  // 수정해야합니다. 레벨 
+  // 수정해야합니다. 레벨
   addMonster(level) {
-    this.monsterManager.addMonster(this.id, level); 
+    this.monsterManager.addMonster(this.id, level);
   }
 
   getMonster(monsterId) {
@@ -84,6 +86,12 @@ class Game {
   matchStartNotification() {
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
+
+      // 유저 상태 동기화 인터벌 추가
+      this.intervalManager.addPlayer(socket, user.syncStateNotification(), 100);
+
+      // 라운드 수 증가 인터벌 추가
+
       // 초기 상태
       const initialGameState = {
         baseHp: 100,
@@ -113,7 +121,7 @@ class Game {
           x: 0,
           y: 0,
         },
-      }
+      };
 
       // 상대 데이터
       const opponentData = {
@@ -132,12 +140,14 @@ class Game {
           x: 0,
           y: 0,
         },
-      }
+      };
 
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const S2CMatchStartNotification = protoMessages.towerDefense.GamePacket;
-        const message = S2CMatchStartNotification.create({ matchStartNotification: { initialGameState, playerData, opponentData } });
+        const message = S2CMatchStartNotification.create({
+          matchStartNotification: { initialGameState, playerData, opponentData },
+        });
         const payload = S2CMatchStartNotification.encode(message).finish();
         console.log(payload);
         const decodedMessage = S2CMatchStartNotification.decode(payload);
@@ -155,6 +165,7 @@ class Game {
   }
 
   // 내 상태를 알림
+
   stateSyncNotification() {
     const towerDatas = [];
     const monsterDatas = [];
@@ -166,7 +177,7 @@ class Game {
       score: 0,
       TowerData: towerDatas,
       MonsterData: monsterDatas,
-    }
+    };
   }
 }
 
