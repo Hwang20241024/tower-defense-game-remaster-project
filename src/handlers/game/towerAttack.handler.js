@@ -3,7 +3,6 @@ import { enemyTowerAttackNotification } from '../../utils/notification/game.noti
 import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
-import { createResponse } from '../../utils/response/createResponse.js';
 import { getGameSession } from '../../session/game.session.js';
 
 // 에러 부분이 완료되기 전까지 주석처리 좀 해둘게요!
@@ -42,7 +41,3 @@ export const towerAttackHandler = (socket, payload) => {
 
   session.broadcast(packet, socket);
 };
-
-// !!! 시간이 남아돌면 해보기 !!!
-// 2. 타워가 몬스터를 공격할 수 있는 위치가 맞는가?
-// 궁금증 : json 파일이 아니라 유니티 에셋을 통해 타워의 power,range 등등이 정의되는 것 같던데 그럼 서버는 이 기본값에 대해 알 방법이 없는 건가? 클라이언트를 손대기 전까지는 타워의 공격력 혹은 범위 검증이 불가능한 것...??
