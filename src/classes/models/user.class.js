@@ -4,6 +4,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { getGameSession } from '../../session/game.session.js';
 
 class User {
   constructor(socket, id, highScore, sequence) {
@@ -101,6 +102,14 @@ class User {
 
   getHighScore() {
     return this.highScore;
+  }
+
+  getOpponent() {
+    const session = getGameSession(this.gameId);
+    const opponentSocket = session.users.keys().find((socket) => socket !== this.socket);
+    const opponent = session.users.get(opponentSocket);
+
+    return opponent;
   }
 
   resetUser() {
