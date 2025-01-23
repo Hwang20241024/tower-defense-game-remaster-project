@@ -13,4 +13,5 @@ export const ErrorCodes = {
 
   INVALID_VALUE: 100100,
   INVALID_PASSWORD: 100101,
+  INVALID_REQUEST: 100102,
 };
