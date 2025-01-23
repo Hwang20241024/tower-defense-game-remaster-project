@@ -30,7 +30,7 @@ class Game {
     const userSocket = user.getUserSocket();
 
     this.users.set(userSocket, user);
-    // this.intervalManager.addPlayer(user.socket, user.syncState.bind(user), 100);
+    this.intervalManager.addPlayer(user.socket, user.syncState(user.socket).bind(user), 100);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
