@@ -24,15 +24,14 @@ export const towerAttackHandler = (socket, payload) => {
   // towerId, monsterId가 유효한지 검증
   // 1. 해당 타워를 사용자가 소유 중인가?
   const tower = session.checkIsTowerOwner(socket, towerId);
-
   if (!tower) {
-    // throw CustomError(ErrorCodes.INVALID_PACKET, '사용자가 보유 중인 타워가 아닙니다.');
+    throw new CustomError(ErrorCodes.INVALID_PACKET, '사용자가 보유 중인 타워가 아닙니다.');
   }
 
   // 2. 몬스터가 세션에 존재하는가?
   const monster = user.monsters.find((monster) => monster.monsterId === monsterId);
   if (!monster) {
-    throw CustomError(ErrorCodes.INVALID_PACKET, '세션에 존재하지 않는 몬스터입니다.');
+    throw new CustomError(ErrorCodes.INVALID_PACKET, '세션에 존재하지 않는 몬스터입니다.');
   }
 
   // 검증을 통과했다면 몬스터의 체력 감소...타워의 데미지는 클라이언트 에셋 거를 config로 정의해둬야 할 듯(직접 확인해보니 40임)
