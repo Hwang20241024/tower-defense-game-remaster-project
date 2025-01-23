@@ -42,7 +42,7 @@ const singInHandler = async (socket, payload, sequence) => {
     const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
     // 5. 유저 세션 추가
-    const userSession = addUser(socket, id, sequence);
+    const userSession = addUser(socket, id, user.score, sequence);
 
     // 6. 로그인 상태 변경
     await updateUserLoginState(id, true);
