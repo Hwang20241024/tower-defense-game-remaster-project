@@ -37,23 +37,20 @@ class User {
   }
 
   getMonsterLevel() {
-    return this.monsterLevel
+    return this.monsterLevel;
   }
 
   syncStateNotification() {
-    const towerDatas = [];
-    const monsterDatas = [];
-
     const protoMessages = getProtoMessages();
     const notification = protoMessages.towerDefense.GamePacket;
     const notificationGamePacket = notification.create({
       stateSyncNotification: {
-        userGold: this.userGold,
+        userGold: this.gold,
         baseHp: this.baseHp,
         monsterLevel: this.monsterLevel,
         score: this.score,
-        TowerData: towerDatas,
-        MonsterData: monsterDatas,
+        TowerData: this.towers,
+        MonsterData: this.monsters,
         message: '상태 동기화 패킷입니다.',
       },
     });
