@@ -30,7 +30,7 @@ export const towerAttackHandler = (socket, payload) => {
   }
 
   // 2. 몬스터가 세션에 존재하는가?
-  const monster = session.monsters.get(monsterId);
+  const monster = user.monsters.find((monster) => monster.monsterId === monsterId);
   if (!monster) {
     throw CustomError(ErrorCodes.INVALID_PACKET, '세션에 존재하지 않는 몬스터입니다.');
   }
