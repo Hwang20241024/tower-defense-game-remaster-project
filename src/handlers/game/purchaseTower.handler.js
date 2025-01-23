@@ -30,8 +30,7 @@ const purchaseTowerHandler = async (socket, payload) => {
     const protoMessages = getProtoMessages();
     const response = protoMessages.towerDefense.GamePacket;
     const responseGamePacket = response.create({
-      // towerPurchaseResponse: { towerId, message: '타워가 생성되었습니다.' },
-      towerPurchaseResponse: { towerId },
+      towerPurchaseResponse: { towerId: towerId, message: '타워가 생성되었습니다.' },
     });
 
     const responsePayLoad = response.encode(responseGamePacket).finish();

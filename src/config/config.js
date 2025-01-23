@@ -36,6 +36,15 @@ export const config = {
     towerCost: 100,
     monsterInterval: 3,
   },
+  rounds: [
+    { monsterLevel: 1, goal: 1000, gold: 2000 },
+    { monsterLevel: 2, goal: 3000, gold: 5000 },
+    { monsterLevel: 3, goal: 5000, gold: 7000 },
+    { monsterLevel: 4, goal: 7000, gold: 10000 },
+    { monsterLevel: 5, goal: 10000, gold: 15000 },
+    { monsterLevel: 6, goal: 15000, gold: 20000 },
+    { monsterLevel: 7, goal: 20000, gold: 30000 },
+  ],
   databases: {
     CH5_TEAM: {
       name: DB_NAME,
