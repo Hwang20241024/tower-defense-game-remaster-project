@@ -48,6 +48,10 @@ class User {
     const packet = stateSyncNotification(payload, this.socket);
     socket.write(packet);
   }
+
+  getMonsterLevel() {
+    return this.monsterLevel;
+  }
 }
 
 export default User;

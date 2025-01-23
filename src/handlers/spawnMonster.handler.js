@@ -15,7 +15,7 @@ const spawnMonsterHandler = async (socket, payload) => {
   }
 
   // 몬스터 추가
-  gameSession.addMonster(1);
+  gameSession.addMonster(gameId.getMonsterLevel());
   // 갱신후 마지막 몬스터를 가져오기
   const monster = gameSession.getLastMonster();
   // console.log(monster);
