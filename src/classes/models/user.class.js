@@ -33,6 +33,10 @@ class User {
   getNextSequence() {
     return ++this.sequence;
   }
+
+  getMonsterLevel() {
+    return this.monsterLevel
+  }
 }
 
 export default User;
