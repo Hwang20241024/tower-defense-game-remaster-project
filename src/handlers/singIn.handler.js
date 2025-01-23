@@ -1,4 +1,4 @@
-import { findUserById } from '../db/user/user.db.js';
+import { findUserById, updateUserLoginState } from '../db/user/user.db.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import bcrypt from 'bcrypt';
@@ -34,13 +34,20 @@ const singInHandler = async (socket, payload, sequence) => {
       throw new CustomError(ErrorCodes.INVALID_PASSWORD, '비밀번호가 일치하지 않습니다.');
     }
 
+    if (user.isLogin) {
+      throw new CustomError(ErrorCodes.INVALID_REQUEST, '이미 로그인 상태 입니다.');
+    }
+
     // 4. JWT 토큰 생성
     const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
     // 5. 유저 세션 추가
-    const userSession = addUser(socket, sequence);
+    const userSession = addUser(socket, id, sequence);
 
-    // 6. Response
+    // 6. 로그인 상태 변경
+    await updateUserLoginState(id, true);
+
+    // 7. Response
     const protoMessages = getProtoMessages();
     const response = protoMessages.towerDefense.GamePacket;
     const gamePacket = response.create({
