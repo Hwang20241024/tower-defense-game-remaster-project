@@ -1,5 +1,6 @@
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import CustomError from '../../utils/error/customError.js';
+import { stateSyncNotification } from '../../utils/notification/game.notification.js';
 
 class User {
   constructor(socket, sequence) {
@@ -34,8 +35,22 @@ class User {
     return ++this.sequence;
   }
 
+  syncState(socket) {
+    const payload = {
+      userGold: this.gold,
+      baseHp: this.baseHp,
+      monsterLevel: this.monsterLevel,
+      score: this.score,
+      towerData: this.towers,
+      mosterData: this.monsters,
+    };
+
+    const packet = stateSyncNotification(payload, this.socket);
+    socket.write(packet);
+  }
+
   getMonsterLevel() {
-    return this.monsterLevel
+    return this.monsterLevel;
   }
 }
 

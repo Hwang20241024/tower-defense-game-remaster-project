@@ -7,12 +7,14 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
+import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
+    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -28,6 +30,7 @@ class Game {
     const userSocket = user.getUserSocket();
 
     this.users.set(userSocket, user);
+    this.intervalManager.addPlayer(user.socket, user.syncState(user.socket).bind(user), 100);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
@@ -51,7 +54,7 @@ class Game {
     return this.users.size;
   }
 
-  // 수정해야합니다. 레벨 
+  // 수정해야합니다. 레벨
   addMonster(level) {
     this.monsterManager.addMonster(this.id, level);
   }
@@ -138,7 +141,7 @@ class Game {
           x: 1400,
           y: _y,
         },
-      }
+      };
 
       userDatas.set(user, userData);
     }
@@ -146,7 +149,7 @@ class Game {
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const GamePacket = protoMessages.towerDefense.GamePacket;
 
         // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
@@ -161,8 +164,8 @@ class Game {
           matchStartNotification: {
             initialGameState,
             playerData,
-            opponentData
-          }
+            opponentData,
+          },
         };
 
         // 페이로드 검증
@@ -198,7 +201,7 @@ class Game {
       score: 0,
       TowerData: towerDatas,
       MonsterData: monsterDatas,
-    }
+    };
   }
 }
 

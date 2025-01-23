@@ -6,7 +6,7 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getGameSession } from '../../session/game.session.js';
 
-export const towerAttackHandler = ({ socket, payload }) => {
+export const towerAttackHandler = ( socket, payload ) => {
   // 패킷 파서(혹은 onData)에서 버전 검증
   const { towerId, monsterId } = payload;
 

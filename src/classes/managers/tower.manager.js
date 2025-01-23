@@ -11,6 +11,8 @@ class TowerManager {
     this.curId += 1;
     const tower = new Tower(id, socket, x, y);
     this.towers.set(id, tower);
+
+    return id;
   }
 
   getTowerById(id) {

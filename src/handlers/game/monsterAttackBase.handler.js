@@ -8,7 +8,8 @@ import {
 } from '../../utils/notification/game.notification.js';
 
 // 나와 상대를 가리지 않고 몬스터가 베이스를 공격하면 도착하는 패킷
-export const monsterAttackBaseHandler = ({ socket, payload }) => {
+export const monsterAttackBaseHandler = ( socket, payload ) => {
+  console.log('패킷 도착?!?!');
   // 패킷 파서(혹은 onData)에서 버전 검증
   const { damage } = payload;
 
