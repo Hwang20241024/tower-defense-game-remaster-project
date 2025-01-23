@@ -65,6 +65,10 @@ class User {
     }
   }
 
+  getScore() {
+    return this.score;
+  }
+
   syncStateNotification() {
     const protoMessages = getProtoMessages();
     const notification = protoMessages.towerDefense.GamePacket;

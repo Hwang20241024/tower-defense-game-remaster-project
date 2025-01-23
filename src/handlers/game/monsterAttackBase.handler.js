@@ -48,8 +48,6 @@ export const monsterAttackBaseHandler = (socket, payload) => {
     user.baseHp = 0;
   }
 
-  console.log('baseHp : ', user.baseHp);
-
   // S2CUpdateBaseHPNotification 패킷을 나와 상대방에게 전송하기
   const dataToMe = { isOpponent: false, baseHp: user.baseHp };
   const dataToOpponent = { isOpponent: true, baseHp: user.baseHp };
