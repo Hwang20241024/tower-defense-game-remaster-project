@@ -6,7 +6,8 @@ import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 
 class User {
-  constructor(socket, sequence) {
+  constructor(socket, id, highScore, sequence) {
+    this.id = id, // string
     this.socket = socket;
     this.sequence = sequence;
     this.baseHp = 100;
@@ -15,7 +16,12 @@ class User {
     this.towers = [];
     this.monsters = [];
     this.monsterLevel = 0;
-    this.highScore = 0;
+    this.highScore = highScore;
+    this.gameId = null;
+  }
+
+  getUserId() {
+    return this.id;
   }
 
   setGameId(gameId) {
