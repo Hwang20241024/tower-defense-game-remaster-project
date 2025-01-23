@@ -2,6 +2,7 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import CustomError from '../../utils/error/customError.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
+import { config } from '../../config/config.js';
 
 class User {
   constructor(socket, sequence) {
@@ -38,6 +39,18 @@ class User {
 
   getMonsterLevel() {
     return this.monsterLevel;
+  }
+
+  addScore(value) {
+    this.score += value;
+
+    const currentRound = config.rounds((round) => round.monsterLevel === this.monsterLevel);
+    if (!currentRound) return;
+
+    if (this.score >= currentRound.goal) {
+      this.gold += currentRound.gold;
+      this.monsterLevel += 1;
+    }
   }
 
   syncStateNotification() {

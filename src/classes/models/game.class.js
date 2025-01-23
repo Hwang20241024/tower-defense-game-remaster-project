@@ -105,12 +105,8 @@ class Game {
 
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
-
       // 유저 상태 동기화 인터벌 추가
       this.intervalManager.addPlayer(socket, user.syncStateNotification(), 100);
-
-      // 라운드 수 증가 인터벌 추가
-
 
       const towerDatas = [];
       const monsterDatas = [];
@@ -162,14 +158,14 @@ class Game {
       };
 
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const GamePacket = protoMessages.towerDefense.GamePacket;
         const payload = {
           matchStartNotification: {
             initialGameState,
             playerData,
-            opponentData
-          }
+            opponentData,
+          },
         };
         const errMsg = GamePacket.verify(payload);
         if (errMsg) {
