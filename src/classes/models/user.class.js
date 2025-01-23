@@ -1,9 +1,13 @@
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import CustomError from '../../utils/error/customError.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import { config } from '../../config/config.js';
+import { createResponse } from '../../utils/response/createResponse.js';
 
 class User {
-  constructor(socket, userId, highScore, sequence) {
-    this.userId = userId, // string
+  constructor(socket, id, highScore, sequence) {
+    this.id = id, // string
     this.socket = socket;
     this.sequence = sequence;
     this.baseHp = 100;
@@ -13,6 +17,11 @@ class User {
     this.monsters = [];
     this.monsterLevel = 0;
     this.highScore = highScore;
+    this.gameId = null;
+  }
+
+  getUserId() {
+    return this.id;
   }
 
   setGameId(gameId) {
@@ -36,7 +45,45 @@ class User {
   }
 
   getMonsterLevel() {
-    return this.monsterLevel
+    return this.monsterLevel;
+  }
+
+  addScore(value) {
+    this.score += value;
+
+    const currentRound = config.rounds((round) => round.monsterLevel === this.monsterLevel);
+    if (!currentRound) return;
+
+    if (this.score >= currentRound.goal) {
+      this.gold += currentRound.gold;
+      this.monsterLevel += 1;
+    }
+  }
+
+  syncStateNotification() {
+    const protoMessages = getProtoMessages();
+    const notification = protoMessages.towerDefense.GamePacket;
+    const notificationGamePacket = notification.create({
+      stateSyncNotification: {
+        userGold: this.gold,
+        baseHp: this.baseHp,
+        monsterLevel: this.monsterLevel,
+        score: this.score,
+        TowerData: this.towers,
+        MonsterData: this.monsters,
+        message: '상태 동기화 패킷입니다.',
+      },
+    });
+
+    const notificationPayload = notification.encode(notificationGamePacket).finish();
+
+    const syncStateNotification = createResponse(
+      PACKET_TYPE.STATE_SYNC_NOTIFICATION,
+      this.sequence,
+      notificationPayload,
+    );
+
+    this.socket.write(syncStateNotification);
   }
 }
 
