@@ -6,6 +6,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
+import { config } from '../../config/config.js';
 
 const purchaseTowerHandler = async (socket, payload) => {
   try {
@@ -22,6 +23,12 @@ const purchaseTowerHandler = async (socket, payload) => {
     if (!game) {
       throw new CustomError(ErrorCodes.GAME_NOT_FOUND, '게임을 찾을 수 없습니다.');
     }
+
+    if (user.gold < config.ingame.towerCost) {
+      throw new CustomError(ErrorCodes.NOT_ENOUGH_MONEY, '금액이 충분하지 않습니다.');
+    }
+
+    user.gold -= config.ingame.towerCost;
 
     // 타워 생성
     const towerId = game.towerManager.addTower(socket, x, y);

@@ -7,17 +7,22 @@ import { createResponse } from '../../utils/response/createResponse.js';
 
 class User {
   constructor(socket, id, highScore, sequence) {
-    this.id = id, // string
+    this.id = id; // string
     this.socket = socket;
     this.sequence = sequence;
-    this.baseHp = 100;
+    this.baseHp = config.ingame.baseHp;
     this.score = 0;
-    this.gold = 100;
+    this.gold = config.ingame.initialGold;
     this.towers = [];
     this.monsters = [];
-    this.monsterLevel = 0;
+    this.monsterLevel = 1;
     this.highScore = highScore;
     this.gameId = null;
+    this.setCurrentRound();
+  }
+
+  setCurrentRound() {
+    this.currentRound = config.rounds.find((round) => round.monsterLevel === this.monsterLevel);
   }
 
   getUserId() {
@@ -51,12 +56,12 @@ class User {
   addScore(value) {
     this.score += value;
 
-    const currentRound = config.rounds((round) => round.monsterLevel === this.monsterLevel);
-    if (!currentRound) return;
+    if (!this.currentRound) return;
 
-    if (this.score >= currentRound.goal) {
-      this.gold += currentRound.gold;
+    if (this.score >= this.currentRound.goal) {
+      this.gold += this.currentRound.gold;
       this.monsterLevel += 1;
+      this.setCurrentRound();
     }
   }
 
