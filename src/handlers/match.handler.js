@@ -7,5 +7,7 @@ export const matchHandler = (socket, payload) => {
     const game = getEnableGameSession();
     // 게임에 유저 추가
     const user = getUserBySocket(socket);
+    
     game.addUser(user);
+    user.setGameId(game.getGameId());
 }
