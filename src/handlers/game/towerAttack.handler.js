@@ -40,7 +40,7 @@ export const towerAttackHandler = ({ socket, payload }) => {
 
   // 검증을 통과했다면 몬스터의 체력 감소...타워의 데미지는 클라이언트 에셋 거를 config로 정의해둬야 할 듯(직접 확인해보니 40임)
 
-  monster.hp -= config.ingame.towerPower;
+  // monster.hp -= config.ingame.towerPower;
 
   const packet = enemyTowerAttackNotification(payload, socket);
 

@@ -64,6 +64,10 @@ class Game {
   removeMonster(monsterId) {
     this.monsterManager.removeMonster(monsterId);
   }
+  // 추가.
+  getLastMonster() {
+    return this.monsterManager.getLastMonster();
+  }
 
   checkIsTowerOwner(socket, towerId) {
     const tower = this.towerManager.towers.get(towerId);

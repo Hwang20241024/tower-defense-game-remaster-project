@@ -26,6 +26,9 @@ const monsterDeathHandler = async (socket, payload) => {
   const initialResponse = createResponse(PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION, gameId.sequence, payloadData);
 
   socket.write(initialResponse);
+
+  // 브로드 케스트 추가
+  await gameSession.broadcast(initialResponse, socket);
 };
 
 export default monsterDeathHandler;
