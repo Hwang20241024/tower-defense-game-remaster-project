@@ -64,7 +64,7 @@ export const updateBaseHPNotification = (data, socket) => {
 
   const response = protoMessages.towerDefense.GamePacket;
   const gamePacket = response.create({
-    updateBaseHPNotification: data,
+    updateBaseHpNotification: data,
   });
 
   const updateBaseHPPacket = response.encode(gamePacket).finish();
