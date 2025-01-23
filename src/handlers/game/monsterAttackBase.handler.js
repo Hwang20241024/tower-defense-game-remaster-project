@@ -15,9 +15,10 @@ export const monsterAttackBaseHandler = (socket, payload) => {
 
   // 소켓을 통해 유저 객체 불러오기
   const user = getUserBySocket(socket);
-  // if (!user) {
-  //   // throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
-  // }
+  if (!user) {
+    throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+  }
+
   // 유저를 통해 게임 세션 불러오기
   const gameId = user.getGameId();
   const session = getGameSession(gameId);
@@ -72,6 +73,7 @@ export const monsterAttackBaseHandler = (socket, payload) => {
 
     // 게임 승패가 결정되는 동시에 게임 종료 작업
     removeGameSession(gameId);
+    session.intervalManager.clearAll();
     // user.setGameId(null);
   }
 };
