@@ -10,12 +10,12 @@ class User {
     this.id = id, // string
     this.socket = socket;
     this.sequence = sequence;
-    this.baseHp = 100;
+    this.baseHp = config.ingame.baseHp;
     this.score = 0;
-    this.gold = 100;
+    this.gold = config.ingame.initialGold;
     this.towers = [];
     this.monsters = [];
-    this.monsterLevel = 0;
+    this.monsterLevel = 1;
     this.highScore = highScore;
     this.gameId = null;
   }
