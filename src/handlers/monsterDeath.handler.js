@@ -12,7 +12,7 @@ const monsterDeathHandler = async (socket, payload) => {
   gameSession.removeMonster(payload.monsterId);
   gameId.addScore(100);
 
-  const user = await findUserById(gameId.id);
+  const user = await findUserById(gameId.id); // 이건 데이터베이스에서의 user
   const highestScore = user.score;
   console.log('user', user);
   console.log('highestScore', highestScore);
@@ -20,6 +20,7 @@ const monsterDeathHandler = async (socket, payload) => {
 
   if (gameId.score > highestScore) {
     await updateUserScore(gameId.score, gameId.id);
+    gameId.setHighScore(gameId.score);
   }
 
   // 페이로드 직렬화.

@@ -15,6 +15,18 @@ export const getUserBySocket = (socket) => {
   return userSessions.get(socket);
 };
 
+export const getOpponentBySocket = (gameId, socket) => {
+  let opponent;
+
+  for (const [key, value] of userSessions) {
+    if (value.gameId === gameId && key !== socket) {
+      opponent = key; // value가 일치하는 key를 배열에 추가
+    }
+  }
+
+  return userSessions.get(opponent);
+};
+
 export const getAllUserSessions = () => {
   return userSessions;
 };

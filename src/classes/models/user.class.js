@@ -94,6 +94,25 @@ class User {
 
     this.socket.write(syncStateNotification);
   }
+
+  setHighScore(score) {
+    this.highScore = score;
+  }
+
+  getHighScore() {
+    return this.highScore;
+  }
+
+  resetUser() {
+    this.baseHp = config.ingame.baseHp;
+    this.score = 0;
+    this.gold = config.ingame.initialGold;
+    this.towers = [];
+    this.monsters = [];
+    this.monsterLevel = 1;
+    this.gameId = null;
+    this.setCurrentRound();
+  }
 }
 
 export default User;
