@@ -22,10 +22,6 @@ const monsterDeathHandler = async (socket, payload) => {
   gameSession.removeMonster(payload.monsterId);
   gameId.addScore(config.ingame.score * gameId.getMonsterLevel());
 
-  if (gameId.score > gameId.getHighScore()) {
-    gameId.setHighScore(gameId.score);
-  }
-
   // 페이로드 직렬화.
   const protoMessages = getProtoMessages();
 
