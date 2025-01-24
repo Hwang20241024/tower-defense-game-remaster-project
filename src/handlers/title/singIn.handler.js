@@ -48,9 +48,7 @@ const singInHandler = async (socket, payload, sequence) => {
     }
 
     // 5. 유저 세션 추가 + DB에서 유저의 최고 기록 불러오기
-    const userSession = addUser(socket, id, user.score, sequence);
-    const highestScore = user.score;
-    userSession.setHighScore(highestScore);
+    const userSession = addUser(socket, id, user.score, user.rating, sequence);
 
     // 임시 Sequnce세션에서 삭제
     removeSequenceSession(socket);

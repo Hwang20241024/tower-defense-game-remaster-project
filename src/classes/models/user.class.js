@@ -7,7 +7,7 @@ import { createResponse } from '../../utils/response/createResponse.js';
 import { getGameSession } from '../../session/game.session.js';
 
 class User {
-  constructor(socket, id, highScore, sequence) {
+  constructor(socket, id, highScore, rating, sequence) {
     this.id = id; // string
     this.socket = socket;
     this.sequence = sequence;
@@ -19,6 +19,7 @@ class User {
     this.monsterLevel = 1;
     this.highScore = highScore;
     this.gameId = null;
+    this.rating = rating;
     this.setCurrentRound();
   }
 
