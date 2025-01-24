@@ -60,8 +60,8 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     session.broadcast(winPacketToOpponent, socket);
 
     // elo rating
-    const myRate = user.rating;
-    const opponentRate = opponent.rating;
+    let myRate = user.rating;
+    let opponentRate = opponent.rating;
     const ea = 1 / (1 + Math.pow(10, (opponentRate - myRate) / 400)); // 내 기대 승률
     const oa = 1 / (1 + Math.pow(10, (myRate - opponentRate) / 400)); // 상대 기대 승률
     myRate = myRate - 16 * ea;
