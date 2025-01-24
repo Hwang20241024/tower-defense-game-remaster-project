@@ -74,9 +74,11 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     // 게임 승패가 결정되는 동시에 게임 종료 작업
     // DB에 나와 상대방의 최고 기록 저장
     if (user.score > userHighestScore) {
+      user.setHighScore(gameId.score);
       await updateUserScore(user.score, user.id);
     }
     if (opponent.score > opponentHighestScore) {
+      opponent.setHighScore(opponentHighestScore);
       await updateUserScore(opponent.score, opponent.id);
     }
 
