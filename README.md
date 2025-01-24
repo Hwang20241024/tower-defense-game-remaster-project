@@ -2,11 +2,11 @@
 
 # 1. Architecture
 
-- (내용)
+![Image Alt Text](images/image1.png)
 
-# 2. Directory (임시)
+# 2. Directory 
 
-## 2-1. server (임시)
+## 2-1. server 
 ```
 📦src
  ┣ 📂classes
@@ -39,22 +39,19 @@
  ┗ 📜server.js
 ```
 
-## 2-2. client
-
-- (내용)
-
 # 3. Project Introduction
 
-## 3-1. packet (임시)
-- (내용)
+## 3-1. packet 
 
-## 3-2. algorithm (임시)
-- (내용)
+![Image Alt Text](images/image2.png)
 
-## 3-3. 추가...
+![Image Alt Text](images/image3.png)
+
+![Image Alt Text](images/image4.png)
+
 
 # 4. Tech Stack (임시)
-[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis,unity&theme=light)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,unity&theme=light)](https://skillicons.dev)
 
 
 
