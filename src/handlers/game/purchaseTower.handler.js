@@ -50,6 +50,7 @@ const purchaseTowerHandler = async (socket, payload) => {
 
     socket.write(towerPurchaseResponse);
 
+    // 적에게 타워 생성 알림
     const notificationGamePacket = response.create({
       // addEnemyTowerNotification: { towerId, x, y, message: '적이 타워를 생성했습니다.' },
       addEnemyTowerNotification: { towerId, x, y },
@@ -57,13 +58,13 @@ const purchaseTowerHandler = async (socket, payload) => {
 
     const notificationPayLoad = response.encode(notificationGamePacket).finish();
 
-    const addEnemyTowerNotificationResponse = createResponse(
+    const addEnemyTowerNotification = createResponse(
       PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
       user.sequence,
       notificationPayLoad,
     );
 
-    game.broadcast(addEnemyTowerNotificationResponse, socket);
+    game.broadcast(addEnemyTowerNotification, socket);
   } catch (error) {
     handleError(socket, error);
   }
