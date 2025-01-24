@@ -89,7 +89,7 @@
 ![Image Alt Text](images/image4.png)
 
 
-# 4. Tech Stack (임시)
+# 4. Tech Stack
 [![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,unity&theme=light)](https://skillicons.dev)
 
 
