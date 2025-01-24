@@ -1,14 +1,14 @@
-import { findUserById, updateUserLoginState } from '../db/user/user.db.js';
-import CustomError from '../utils/error/customError.js';
-import { ErrorCodes } from '../utils/error/errorCodes.js';
+import { findUserById, updateUserLoginState } from '../../db/user/user.db.js';
+import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import bcrypt from 'bcrypt';
-import { createResponse } from '../utils/response/createResponse.js';
-import { PACKET_DATA, PACKET_TYPE } from '../constants/header.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import { PACKET_DATA, PACKET_TYPE } from '../../constants/header.js';
 import jwt from 'jsonwebtoken';
-import { TOKEN_SECRET_KEY } from '../constants/env.js';
-import { handleError } from '../utils/error/errorHandler.js';
-import { getProtoMessages } from '../init/loadProtos.js';
-import { addUser } from '../session/user.session.js';
+import { TOKEN_SECRET_KEY } from '../../constants/env.js';
+import { handleError } from '../../utils/error/errorHandler.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
+import { addUser } from '../../session/user.session.js';
 
 const singInHandler = async (socket, payload, sequence) => {
   const { id, password } = payload;
@@ -41,8 +41,10 @@ const singInHandler = async (socket, payload, sequence) => {
     // 4. JWT 토큰 생성
     const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
-    // 5. 유저 세션 추가
+    // 5. 유저 세션 추가 + DB에서 유저의 최고 기록 불러오기
     const userSession = addUser(socket, id, user.score, sequence);
+    const highestScore = user.score;
+    userSession.setHighScore(highestScore);
 
     // 6. 로그인 상태 변경
     await updateUserLoginState(id, true);
