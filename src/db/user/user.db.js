@@ -21,3 +21,7 @@ export const updateAllUserLoginState = async () => {
 export const updateUserScore = async (score, id) => {
   await pools.CH5_TEAM.query(SQL_USER_QUERIES.UPDATE_USER_SCORE, [score, id]);
 };
+
+export const updateUserRating = async (rating, id) => {
+  await pools.CH5_TEAM.query(SQL_USER_QUERIES.UPDATE_USER_RATING, [rating, id]);
+}

@@ -64,7 +64,7 @@ class Game {
   }
 
   // 테스트용
-  getMonsters () {
+  getMonsters() {
     return this.monsterManager.getMonstersArr();
   }
 
@@ -106,9 +106,6 @@ class Game {
 
     // 유저 데이터 초기화
     for (var [socket, user] of this.users) {
-      // 유저 상태 동기화 인터벌 추가
-      this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
-
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
       var _y = 350;
@@ -197,6 +194,11 @@ class Game {
         );
 
         socket.write(matchStartNotificationResponse);
+
+        // 유저 상태 동기화 인터벌 추가
+        setTimeout(() => {
+          this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+        }, 1000);
       } catch (error) {
         console.log(error);
       }
