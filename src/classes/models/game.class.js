@@ -93,7 +93,7 @@ class Game {
   }
 
   // 매치가 시작되었음을 알림
-  matchStartNotification() {
+  async matchStartNotification() {
     // 초기 상태 로드
     const initialGameState = {
       baseHp: config.ingame.baseHp,
@@ -181,7 +181,7 @@ class Game {
         //   buffer,
         // );
 
-        // 
+        //
         const matchStartNotificationResponse = createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
           user.sequence,
@@ -190,19 +190,25 @@ class Game {
             playerData,
             opponentData,
           },
-          "matchStartNotification"
+          'matchStartNotification',
         );
 
         socket.write(matchStartNotificationResponse);
 
-        // 유저 상태 동기화 인터벌 추가
-        setTimeout(() => {
-          this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
-        }, 1000);
+        setTimeout(
+          (user, socket) => {
+            console.log('timeout :', user.id);
+            this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+          },
+          1000,
+          user,
+          socket,
+        );
       } catch (error) {
         console.log(error);
       }
     }
+    // 유저 상태 동기화 인터벌 추가
   }
 }
 
