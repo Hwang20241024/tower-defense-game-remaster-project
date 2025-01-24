@@ -31,5 +31,4 @@ export const onData = (socket) => async (data) => {
       break;
     }
   }
-  // console.log('패킷 읽기 끝.');
 };

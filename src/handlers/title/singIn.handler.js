@@ -1,14 +1,14 @@
-import { findUserById, updateUserLoginState } from '../db/user/user.db.js';
-import CustomError from '../utils/error/customError.js';
-import { ErrorCodes } from '../utils/error/errorCodes.js';
+import { findUserById, updateUserLoginState } from '../../db/user/user.db.js';
+import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import bcrypt from 'bcrypt';
-import { createResponse } from '../utils/response/createResponse.js';
-import { PACKET_DATA, PACKET_TYPE } from '../constants/header.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import { PACKET_DATA, PACKET_TYPE } from '../../constants/header.js';
 import jwt from 'jsonwebtoken';
-import { TOKEN_SECRET_KEY } from '../constants/env.js';
-import { handleError } from '../utils/error/errorHandler.js';
-import { getProtoMessages } from '../init/loadProtos.js';
-import { addUser } from '../session/user.session.js';
+import { TOKEN_SECRET_KEY } from '../../constants/env.js';
+import { handleError } from '../../utils/error/errorHandler.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
+import { addUser } from '../../session/user.session.js';
 
 const singInHandler = async (socket, payload, sequence) => {
   const { id, password } = payload;

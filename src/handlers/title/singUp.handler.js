@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
-import { createUser } from '../db/user/user.db.js';
-import { createResponse } from '../utils/response/createResponse.js';
-import { PACKET_TYPE } from '../constants/header.js';
-import CustomError from '../utils/error/customError.js';
-import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { getProtoMessages } from '../init/loadProtos.js';
-import { handleError } from '../utils/error/errorHandler.js';
+import { createUser } from '../../db/user/user.db.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import CustomError from '../../utils/error/customError.js';
+import { ErrorCodes } from '../../utils/error/errorCodes.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
+import { handleError } from '../../utils/error/errorHandler.js';
 
 /* 회원가입 핸들러 */
 const singUpHandler = async (socket, payload, sequence) => {
