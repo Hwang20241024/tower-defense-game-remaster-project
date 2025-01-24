@@ -4,8 +4,5 @@ export const SQL_USER_QUERIES = {
   UPDATE_USER_LOGIN: 'UPDATE user SET isLogin = ? WHERE id = ?',
   RESET_USER_LOGIN: 'UPDATE user SET isLogin = ? WHERE isLogin = true',
   UPDATE_USER_SCORE: 'UPDATE user SET score = ? WHERE id = ?',
-  UPDATE_USER_RATING: `START TRANSACTION;
-  UPDATE user SET rating = ? WHERE id = ?;
-  UPDATE user SET rating = ? WHERE id = ?;
-  COMMIT;`,
+  UPDATE_USER_RATING: `UPDATE user SET rating = ? WHERE id = ?`,
 };
