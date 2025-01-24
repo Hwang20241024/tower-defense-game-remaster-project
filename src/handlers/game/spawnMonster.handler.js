@@ -21,41 +21,29 @@ const spawnMonsterHandler = async (socket, payload) => {
 
   user.monsters.push(monster);
 
-  const protoMessages = getProtoMessages();
-
-  const response = protoMessages.towerDefense.GamePacket;
-  const gamePacket = response.create({
-    spawnMonsterResponse: {
-      monsterId: monster.monsterId,
-      monsterNumber: monster.monsterNumber,
-    },
-  });
-
-  const payloadData = response.encode(gamePacket).finish();
-
+  // 페이로드 데이터.
+  const payloadData = {
+    monsterId: monster.monsterId,
+    monsterNumber: monster.monsterNumber,
+  }
+  
   // "헤더 + 페이로드" 직렬화.
   const initialResponse = createResponse(
     PACKET_TYPE.SPAWN_MONSTER_RESPONSE,
     gameId.getNextSequence(),
     payloadData,
+    "spawnMonsterResponse"
   );
 
   await socket.write(initialResponse);
 
-  const gamePacket2 = response.create({
-    spawnEnemyMonsterNotification: {
-      monsterId: monster.monsterId,
-      monsterNumber: monster.monsterNumber,
-    },
-  });
-
-  const payloadData2 = response.encode(gamePacket2).finish();
 
   // 브로드 캐스트 (동기화)
   const initialResponse2 = createResponse(
     PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION,
     gameId.getNextSequence(),
-    payloadData2,
+    payloadData,
+    "spawnEnemyMonsterNotification"
   );
   await gameSession.broadcast(initialResponse2, socket);
 };

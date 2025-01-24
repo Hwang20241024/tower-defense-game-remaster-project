@@ -20,22 +20,29 @@ const monsterDeathHandler = async (socket, payload) => {
   }
 
   // 페이로드 직렬화.
-  const protoMessages = getProtoMessages();
+  // const protoMessages = getProtoMessages();
 
-  const response = protoMessages.towerDefense.GamePacket;
-  const gamePacket = response.create({
-    enemyMonsterDeathNotification: {
-      monsterId: payload.monsterId,
-    },
-  });
+  // const response = protoMessages.towerDefense.GamePacket;
+  // const gamePacket = response.create({
+  //   enemyMonsterDeathNotification: {
+  //     monsterId: payload.monsterId,
+  //   },
+  // });
 
-  const payloadData = response.encode(gamePacket).finish();
+  // const payloadData = response.encode(gamePacket).finish();
 
   // "헤더 + 페이로드" 직렬화.
+  // const initialResponse = createResponse(
+  //   PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
+  //   gameId.getNextSequence(),
+  //   payloadData,
+  // );
+
   const initialResponse = createResponse(
     PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
-    gameId.getNextSequence(),
-    payloadData,
+    gameId.sequence,
+    { monsterId: payload.monsterId, },
+    "enemyMonsterDeathNotification"
   );
 
   // 브로드 케스트 추가

@@ -39,19 +39,28 @@ const singUpHandler = async (socket, payload, sequence) => {
     await createUser(id, hashPw, email);
 
     // 4. Response 처리
-    const protoMessages = getProtoMessages();
-    const response = protoMessages.towerDefense.GamePacket;
-    const gamePacket = response.create({
-      registerResponse: { success: true, message: '회원가입에 성공하셨습니다.', failCode: 0 },
-    });
+    // const protoMessages = getProtoMessages();
+    // const response = protoMessages.towerDefense.GamePacket;
+    // const gamePacket = response.create({
+    //   registerResponse: { success: true, message: '회원가입에 성공하셨습니다.', failCode: 0 },
+    // });
 
-    const responsePayload = response.encode(gamePacket).finish();
+    // const responsePayload = response.encode(gamePacket).finish();
 
-    const responsePacket = await createResponse(
+    // const responsePacket = await createResponse(
+    //   PACKET_TYPE.REGISTER_RESPONSE,
+    //   ++sequence,
+    //   responsePayload,
+    // );
+
+    //수정
+    const responsePacket = createResponse(
       PACKET_TYPE.REGISTER_RESPONSE,
       ++sequence,
-      responsePayload,
+      { success: true, message: '회원가입에 성공하셨습니다.', failCode: 0  },
+      "registerResponse"
     );
+
 
     socket.write(responsePacket);
   } catch (error) {

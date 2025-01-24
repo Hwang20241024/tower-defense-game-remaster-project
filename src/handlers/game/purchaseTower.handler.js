@@ -34,35 +34,50 @@ const purchaseTowerHandler = async (socket, payload) => {
     const towerId = game.towerManager.addTower(socket, x, y);
     user.towers.push(game.towerManager.getTowerById(towerId));
 
-    const protoMessages = getProtoMessages();
-    const response = protoMessages.towerDefense.GamePacket;
-    const responseGamePacket = response.create({
-      towerPurchaseResponse: { towerId: towerId, message: '타워가 생성되었습니다.' },
-    });
+    // const protoMessages = getProtoMessages();
+    // const response = protoMessages.towerDefense.GamePacket;
+    // const responseGamePacket = response.create({
+    //   towerPurchaseResponse: { towerId: towerId, message: '타워가 생성되었습니다.' },
+    // });
 
-    const responsePayLoad = response.encode(responseGamePacket).finish();
+    // const responsePayLoad = response.encode(responseGamePacket).finish();
+
+    // const towerPurchaseResponse = createResponse(
+    //   PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
+    //   user.sequence,
+    //   responsePayLoad,
+    // );
 
     const towerPurchaseResponse = createResponse(
       PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
       user.sequence,
-      responsePayLoad,
+      { towerId: towerId, message: '타워가 생성되었습니다.' },
+      "towerPurchaseResponse"
     );
-
+  
     socket.write(towerPurchaseResponse);
 
     // 적에게 타워 생성 알림
-    const notificationGamePacket = response.create({
-      // addEnemyTowerNotification: { towerId, x, y, message: '적이 타워를 생성했습니다.' },
-      addEnemyTowerNotification: { towerId, x, y },
-    });
+    // const notificationGamePacket = response.create({
+    //   // addEnemyTowerNotification: { towerId, x, y, message: '적이 타워를 생성했습니다.' },
+    //   addEnemyTowerNotification: { towerId, x, y },
+    // });
 
-    const notificationPayLoad = response.encode(notificationGamePacket).finish();
+    // const notificationPayLoad = response.encode(notificationGamePacket).finish();
+
+    // const addEnemyTowerNotification = createResponse(
+    //   PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
+    //   user.sequence,
+    //   notificationPayLoad,
+    // );
 
     const addEnemyTowerNotification = createResponse(
       PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
       user.sequence,
-      notificationPayLoad,
+      { towerId, x, y },
+      "addEnemyTowerNotification"
     );
+  
 
     game.broadcast(addEnemyTowerNotification, socket);
   } catch (error) {

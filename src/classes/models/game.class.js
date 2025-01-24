@@ -176,13 +176,26 @@ class Game {
         }
 
         // 버퍼 작성 및 전송
-        const message = GamePacket.create(payload);
-        const buffer = GamePacket.encode(message).finish();
+        // const message = GamePacket.create(payload);
+        // const buffer = GamePacket.encode(message).finish();
+        // const matchStartNotificationResponse = createResponse(
+        //   PACKET_TYPE.MATCH_START_NOTIFICATION,
+        //   user.sequence,
+        //   buffer,
+        // );
+
+        // 
         const matchStartNotificationResponse = createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
           user.sequence,
-          buffer,
+          {
+            initialGameState,
+            playerData,
+            opponentData,
+          },
+          "matchStartNotification"
         );
+
         socket.write(matchStartNotificationResponse);
       } catch (error) {
         console.log(error);

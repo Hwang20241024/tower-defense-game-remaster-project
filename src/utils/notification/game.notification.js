@@ -34,21 +34,31 @@ export const enemyTowerAttackNotification = (data, socket) => {
     throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
   }
 
-  const protoMessages = getProtoMessages();
+  // const protoMessages = getProtoMessages();
 
-  const response = protoMessages.towerDefense.GamePacket;
-  const gamePacket = response.create({
-    enemyTowerAttackNotification: data,
-  });
+  // const response = protoMessages.towerDefense.GamePacket;
+  // const gamePacket = response.create({
+  //   enemyTowerAttackNotification: data,
+  // });
 
-  const enemyTowerAttackPacket = response.encode(gamePacket).finish();
+  // const enemyTowerAttackPacket = response.encode(gamePacket).finish();
 
   // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+  // return createResponse(
+  //   PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION,
+  //   user.sequence,
+  //   enemyTowerAttackPacket,
+  // );
+
+  // 수정
   return createResponse(
     PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION,
     user.sequence,
-    enemyTowerAttackPacket,
-  );
+    data,
+    "enemyTowerAttackNotification"
+  )
+
+
 };
 
 export const updateBaseHPNotification = (data, socket) => {
@@ -58,17 +68,25 @@ export const updateBaseHPNotification = (data, socket) => {
     throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
   }
 
-  const protoMessages = getProtoMessages();
+  // const protoMessages = getProtoMessages();
 
-  const response = protoMessages.towerDefense.GamePacket;
-  const gamePacket = response.create({
-    updateBaseHpNotification: data,
-  });
+  // const response = protoMessages.towerDefense.GamePacket;
+  // const gamePacket = response.create({
+  //   updateBaseHpNotification: data,
+  // });
 
-  const updateBaseHPPacket = response.encode(gamePacket).finish();
+  // const updateBaseHPPacket = response.encode(gamePacket).finish();
 
-  // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
-  return createResponse(PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, user.sequence, updateBaseHPPacket);
+  // // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+  // return createResponse(PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION, user.sequence, updateBaseHPPacket);
+
+  // 수정
+  return createResponse(
+    PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION,
+    user.sequence,
+    data,
+    "updateBaseHpNotification"
+  )
 };
 
 export const gameOverNotification = (data, socket) => {
@@ -78,15 +96,23 @@ export const gameOverNotification = (data, socket) => {
     throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
   }
 
-  const protoMessages = getProtoMessages();
+  // const protoMessages = getProtoMessages();
 
-  const response = protoMessages.towerDefense.GamePacket;
-  const gamePacket = response.create({
-    gameOverNotification: data,
-  });
+  // const response = protoMessages.towerDefense.GamePacket;
+  // const gamePacket = response.create({
+  //   gameOverNotification: data,
+  // });
 
-  const gameOverPacket = response.encode(gamePacket).finish();
+  // const gameOverPacket = response.encode(gamePacket).finish();
 
-  // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
-  return createResponse(PACKET_TYPE.GAME_OVER_NOTIFICATION, user.sequence, gameOverPacket);
+  // // return makeNotification(enemyTowerAttackPacket, PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION);
+  // return createResponse(PACKET_TYPE.GAME_OVER_NOTIFICATION, user.sequence, gameOverPacket);
+
+  // 수정
+  return createResponse(
+    PACKET_TYPE.GAME_OVER_NOTIFICATION,
+    user.sequence,
+    data,
+    "gameOverNotification"
+  )
 };

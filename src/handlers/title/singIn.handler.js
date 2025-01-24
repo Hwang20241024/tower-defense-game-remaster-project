@@ -50,23 +50,35 @@ const singInHandler = async (socket, payload, sequence) => {
     await updateUserLoginState(id, true);
 
     // 7. Response
-    const protoMessages = getProtoMessages();
-    const response = protoMessages.towerDefense.GamePacket;
-    const gamePacket = response.create({
-      loginResponse: {
-        success: true,
-        message: '로그인 성공',
-        token,
-        failCode: 0,
-      },
-    });
-    const responsePayload = response.encode(gamePacket).finish();
+    // const protoMessages = getProtoMessages();
+    // const response = protoMessages.towerDefense.GamePacket;
+    // const gamePacket = response.create({
+    //   loginResponse: {
+    //     success: true,
+    //     message: '로그인 성공',
+    //     token,
+    //     failCode: 0,
+    //   },
+    // });
+    // console.log(gamePacket);
+    // const responsePayload = response.encode(gamePacket).finish();
 
+    // const responsePacket = createResponse(
+    //   PACKET_TYPE.LOGIN_RESPONSE,
+    //   userSession.getNextSequence(),
+    //   responsePayload,
+    // );
+
+    // 수정
     const responsePacket = createResponse(
       PACKET_TYPE.LOGIN_RESPONSE,
       userSession.getNextSequence(),
-      responsePayload,
+      {  success: true, message: '로그인 성공', token: token,  failCode: 0,  },
+      "loginResponse"
     );
+
+    console.log(responsePacket);
+
 
     socket.write(responsePacket);
   } catch (error) {
