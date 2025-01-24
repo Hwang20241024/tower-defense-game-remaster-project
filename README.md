@@ -107,7 +107,7 @@ var position = roads1[rand].transform.localPosition + new Vector3(0, Util.Random
 ![Image Alt Text](images/image4.png)
 
 
-# 4. Tech Stack (임시)
+# 4. Tech Stack
 [![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,unity&theme=light)](https://skillicons.dev)
 
 
