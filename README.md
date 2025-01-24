@@ -7,6 +7,9 @@
 # 2. Directory 
 
 ## 2-1. server 
+
+<details>
+ 
 ```
 📦src
  ┣ 📂classes
@@ -77,6 +80,10 @@
  ┃ ┗ 📜dateFomatter.js
  ┗ 📜server.js
 ```
+
+</details>
+
+
 ## 2-2. Client update
 
 ### tower.cs 파일 (Line 43) - Added
