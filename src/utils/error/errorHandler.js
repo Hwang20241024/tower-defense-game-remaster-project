@@ -12,9 +12,11 @@ export const handleError = (socket, error, packetType = null) => {
   let failCode;
 
   if (error.code) {
+    console.log(error);
     console.error(`에러 코드: ${error.code}, 메시지: ${error.message}`);
     failCode = 2;
   } else {
+    console.log(error);
     failCode = 1;
     console.error(`일반 에러: ${error.message}`);
   }
