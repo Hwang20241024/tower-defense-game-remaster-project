@@ -1,5 +1,5 @@
 import { config } from '../../config/config.js';
-import { findUserById, updateUserScore } from '../../db/user/user.db.js';
+import { findUserById, updateUserRating, updateUserScore } from '../../db/user/user.db.js';
 import { getGameSession, removeGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
@@ -46,12 +46,10 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     const opponent = user.getOpponent();
 
     // 유저의 DB 데이터와 최고 기록
-    const userInDB = await findUserById(user.id);
-    const userHighestScore = userInDB.score;
+    const userHighestScore = user.highScore;
 
     // 상대방의 DB 데이터와 최고 기록
-    const opponentInDB = await findUserById(opponent.id);
-    const opponentHighestScore = opponentInDB.score;
+    const opponentHighestScore = opponent.highScore;
 
     const loseToMe = { isWin: false };
     const winToOpponent = { isWin: true };
@@ -61,6 +59,18 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
 
     socket.write(losePacketToMe);
     session.broadcast(winPacketToOpponent, socket);
+
+    // elo rating
+    const myRate = user.rating;
+    const opponentRate = opponent.rating;
+    const ea = 1 / (1 + Math.pow(10, (opponentRate - myRate) / 400)); // 내 기대 승률
+    const oa = 1 / (1 + Math.pow(10, (myRate - opponentRate) / 400)); // 상대 기대 승률
+    myRate = myRate - 16 * ea;
+    opponentRate = opponentRate + 16 * (1 - oa);
+    // update elo rating
+    await updateUserRating(myRate, user.id, opponentRate, opponent.id);
+    user.rating = myRate;
+    opponent.rating = opponentRate;
 
     // 게임 승패가 결정되는 동시에 게임 종료 작업
     // DB에 나와 상대방의 최고 기록 저장
