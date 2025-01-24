@@ -6,20 +6,15 @@ import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getGameSession } from '../../session/game.session.js';
 
-class User {
-  constructor(socket, id, highScore, rating, sequence) {
-    this.id = id; // string
-    this.socket = socket;
-    this.sequence = sequence;
+class User extends SocketSession {
+  constructor() {
     this.baseHp = config.ingame.baseHp;
     this.score = 0;
     this.gold = config.ingame.initialGold;
     this.towers = [];
     this.monsters = [];
     this.monsterLevel = 1;
-    this.highScore = highScore;
     this.gameId = null;
-    this.rating = rating;
     this.setCurrentRound();
   }
 
@@ -80,32 +75,6 @@ class User {
 
   getScore() {
     return this.score;
-  }
-
-  syncStateNotification() {
-    const protoMessages = getProtoMessages();
-    const notification = protoMessages.towerDefense.GamePacket;
-    const notificationGamePacket = notification.create({
-      stateSyncNotification: {
-        userGold: this.gold,
-        baseHp: this.baseHp,
-        monsterLevel: this.monsterLevel,
-        score: this.score,
-        TowerData: this.towers,
-        MonsterData: this.monsters,
-        message: '상태 동기화 패킷입니다.',
-      },
-    });
-
-    const notificationPayload = notification.encode(notificationGamePacket).finish();
-
-    const syncStateNotification = createResponse(
-      PACKET_TYPE.STATE_SYNC_NOTIFICATION,
-      this.sequence,
-      notificationPayload,
-    );
-
-    this.socket.write(syncStateNotification);
   }
 
   setHighScore(score) {
