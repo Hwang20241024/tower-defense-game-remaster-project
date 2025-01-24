@@ -106,7 +106,7 @@ class User {
 
   getOpponent() {
     const session = getGameSession(this.gameId);
-    const opponentSocket = session.users.keys().find((socket) => socket !== this.socket);
+    const opponentSocket = [...session.users.keys()].find((socket) => socket !== this.socket);
     const opponent = session.users.get(opponentSocket);
 
     return opponent;

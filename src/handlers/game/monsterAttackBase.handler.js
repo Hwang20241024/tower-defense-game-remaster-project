@@ -23,6 +23,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
   // 유저를 통해 게임 세션 불러오기
   const gameId = user.getGameId();
   const session = getGameSession(gameId);
+  if (!session) return;
 
   user.baseHp -= damage;
   if (user.baseHp <= 0) {
