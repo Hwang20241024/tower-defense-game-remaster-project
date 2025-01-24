@@ -2,12 +2,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
 import MonsterManager from '../managers/monster.manager.js';
-import { removeGameSession } from '../../session/game.session.js';
+import { getGameSession, removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
 import IntervalManager from '../managers/interval.manager.js';
+import { gameOverNotification } from '../../utils/notification/game.notification.js';
+import { gameEnd } from '../../handlers/game/monsterAttackBase.handler.js';
+import { updateUserScore } from '../../db/user/user.db.js';
 
 class Game {
   constructor() {
@@ -33,7 +36,12 @@ class Game {
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
+      this.time = Date.now();
     }
+  }
+
+  getTime() {
+    return this.time;
   }
 
   getUser(socket) {
@@ -208,7 +216,36 @@ class Game {
         console.log(error);
       }
     }
-    // 유저 상태 동기화 인터벌 추가
+    // 게임 종료 인터벌
+    this.intervalManager.checkTime(this.id, this.checkGameEnd.bind(this), 100);
+  }
+
+  async checkGameEnd() {
+    const now = Date.now();
+
+    this.users.forEach(async (user, socket, map) => {
+      const elapsedTime = now - this.getTime();
+      const userHighestScore = user.highScore;
+
+      if (elapsedTime >= 80000) {
+        const winToMe = { isWin: true };
+
+        const winPacketToMe = gameOverNotification(winToMe, socket);
+
+        socket.write(winPacketToMe);
+
+        if (user.score > userHighestScore) {
+          user.setHighScore(user.score);
+          await updateUserScore(user.score, user.id);
+        }
+
+        removeGameSession(this.id); // 게임 세션 삭제
+        this.intervalManager.clearAll(); // 모든 인터벌 제거
+
+        // 유저들의 객체를 초기화
+        user.resetUser();
+      }
+    });
   }
 }
 
