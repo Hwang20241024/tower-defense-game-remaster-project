@@ -74,7 +74,7 @@ class Game {
   checkIsTowerOwner(socket, towerId) {
     const tower = this.towerManager.towers.get(towerId);
 
-    if (tower.socket === socket) return true;
+    if (tower.userSocket === socket) return true;
     else return false;
   }
 

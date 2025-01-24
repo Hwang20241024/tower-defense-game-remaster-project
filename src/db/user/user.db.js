@@ -17,3 +17,7 @@ export const updateUserLoginState = async (id, loginState) => {
 export const updateAllUserLoginState = async () => {
   await pools.CH5_TEAM.query(SQL_USER_QUERIES.RESET_USER_LOGIN, [false]);
 };
+
+export const updateUserScore = async (score, id) => {
+  await pools.CH5_TEAM.query(SQL_USER_QUERIES.UPDATE_USER_SCORE, [score, id]);
+};

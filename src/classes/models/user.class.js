@@ -4,20 +4,26 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { getGameSession } from '../../session/game.session.js';
 
 class User {
   constructor(socket, id, highScore, sequence) {
-    this.id = id, // string
+    this.id = id; // string
     this.socket = socket;
     this.sequence = sequence;
-    this.baseHp = 100;
+    this.baseHp = config.ingame.baseHp;
     this.score = 0;
-    this.gold = 100;
+    this.gold = config.ingame.initialGold;
     this.towers = [];
     this.monsters = [];
-    this.monsterLevel = 0;
+    this.monsterLevel = 1;
     this.highScore = highScore;
     this.gameId = null;
+    this.setCurrentRound();
+  }
+
+  setCurrentRound() {
+    this.currentRound = config.rounds.find((round) => round.monsterLevel === this.monsterLevel);
   }
 
   getUserId() {
@@ -51,13 +57,17 @@ class User {
   addScore(value) {
     this.score += value;
 
-    const currentRound = config.rounds((round) => round.monsterLevel === this.monsterLevel);
-    if (!currentRound) return;
+    if (!this.currentRound) return;
 
-    if (this.score >= currentRound.goal) {
-      this.gold += currentRound.gold;
+    if (this.score >= this.currentRound.goal) {
+      this.gold += this.currentRound.gold;
       this.monsterLevel += 1;
+      this.setCurrentRound();
     }
+  }
+
+  getScore() {
+    return this.score;
   }
 
   syncStateNotification() {
@@ -84,6 +94,33 @@ class User {
     );
 
     this.socket.write(syncStateNotification);
+  }
+
+  setHighScore(score) {
+    this.highScore = score;
+  }
+
+  getHighScore() {
+    return this.highScore;
+  }
+
+  getOpponent() {
+    const session = getGameSession(this.gameId);
+    const opponentSocket = session.users.keys().find((socket) => socket !== this.socket);
+    const opponent = session.users.get(opponentSocket);
+
+    return opponent;
+  }
+
+  resetUser() {
+    this.baseHp = config.ingame.baseHp;
+    this.score = 0;
+    this.gold = config.ingame.initialGold;
+    this.towers = [];
+    this.monsters = [];
+    this.monsterLevel = 1;
+    this.gameId = null;
+    this.setCurrentRound();
   }
 }
 
