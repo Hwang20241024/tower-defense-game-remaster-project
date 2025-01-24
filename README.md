@@ -77,6 +77,24 @@
  ┃ ┗ 📜dateFomatter.js
  ┗ 📜server.js
 ```
+## 2-2. Client update
+
+### tower.cs 파일 (Line 43) - Added
+
+```
+if (monster.nowHp <= 0) return;
+```
+### GameManager.cs (Line 133) - Changed
+
+```
+Util.Random(5, roads1.Count - 5);
+```
+
+### GameManager.cs (Line 193) - Changed
+
+```
+var position = roads1[rand].transform.localPosition + new Vector3(0, Util.Random(-100, 100));
+```
 
 # 3. Project Introduction
 
