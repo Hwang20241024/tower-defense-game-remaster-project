@@ -7,7 +7,7 @@ const monsterHpPerLv = {
   mon00003: 10,
   mon00004: 20,
   mon00005: 10,
-}
+};
 
 export default class MonsterManager {
   constructor() {
@@ -23,25 +23,24 @@ export default class MonsterManager {
     let monsterHp;
     switch (monsterNumber) {
       case 1:
-        monsterHp = MONSTER_HP + monsterHpPerLv.mon00001 * level;
+        monsterHp = MONSTER_HP + monsterHpPerLv.mon00001 * (level - 1);
         break;
 
       case 2:
-        monsterHp = MONSTER_HP + monsterHpPerLv.mon00002 * level;
+        monsterHp = MONSTER_HP + monsterHpPerLv.mon00002 * (level - 1);
         break;
 
       case 3:
-        monsterHp = MONSTER_HP + monsterHpPerLv.mon00003 * level;
+        monsterHp = MONSTER_HP + monsterHpPerLv.mon00003 * (level - 1);
         break;
 
       case 4:
-        monsterHp = MONSTER_HP + monsterHpPerLv.mon00004 * level;
+        monsterHp = MONSTER_HP + monsterHpPerLv.mon00004 * (level - 1);
         break;
 
       case 5:
-        monsterHp = MONSTER_HP + monsterHpPerLv.mon00005 * level;
+        monsterHp = MONSTER_HP + monsterHpPerLv.mon00005 * (level - 1);
         break;
-
     }
 
     const monster = new Monster(id, gameId, monsterNumber, level, monsterHp);
