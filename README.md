@@ -86,6 +86,12 @@
 
 ## 2-2. Client update
 
+### GameManager.cs (Line 209) - comment
+
+```
+towers.Last().towerId = towerId;
+```
+
 ### tower.cs 파일 (Line 43) - Added
 
 ```

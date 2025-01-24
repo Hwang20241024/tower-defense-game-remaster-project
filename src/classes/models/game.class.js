@@ -92,12 +92,6 @@ class Game {
     });
   }
 
-  // 게임 시작
-  startGame() {
-    // base position 설정
-    // monsterPath 생성
-  }
-
   // 매치가 시작되었음을 알림
   matchStartNotification() {
     // 초기 상태 로드

@@ -6,6 +6,8 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { handleError } from '../../utils/error/errorHandler.js';
+import { setSequenceSession, getSequenceSession } from '../../session/sequence.session.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 /* 회원가입 핸들러 */
 const singUpHandler = async (socket, payload, sequence) => {
@@ -38,7 +40,26 @@ const singUpHandler = async (socket, payload, sequence) => {
     // 3. 유저 정보 저장
     await createUser(id, hashPw, email);
 
-    // 4. Response 처리
+    // 4. 임시 시퀀스 세션에서 시퀀스 유효여부 체크
+    const tempSequence = getSequenceSession(socket);
+    let nextSequence;
+    if (tempSequence) {
+      if (sequence !== tempSequence) {
+        throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 시퀀스 입니다.');
+      }
+      nextSequence = tempSequence + 1;
+      // 임시 Sequnece세션에 업데이트
+      setSequenceSession(socket, nextSequence);
+    } else {
+      const user = getUserBySocket(socket);
+      if (!user) {
+        throw new CustomError(ErrorCodes.USER_NOT_FOUND, '해당 유저를 찾을 수 없습니다.');
+      }
+      user.checkSequence(sequence);
+      nextSequence = user.getNextSequence();
+    }
+
+    // 5. Response 처리
     const protoMessages = getProtoMessages();
     const response = protoMessages.towerDefense.GamePacket;
     const gamePacket = response.create({
@@ -49,7 +70,7 @@ const singUpHandler = async (socket, payload, sequence) => {
 
     const responsePacket = await createResponse(
       PACKET_TYPE.REGISTER_RESPONSE,
-      ++sequence,
+      nextSequence,
       responsePayload,
     );
 

@@ -17,6 +17,7 @@ export const towerAttackHandler = (socket, payload) => {
   // 유저를 통해 게임 세션 불러오기
   const gameId = user.getGameId();
   const session = getGameSession(gameId);
+  if (!session) return;
 
   // towerId, monsterId가 유효한지 검증
   // 1. 해당 타워를 사용자가 소유 중인가?
