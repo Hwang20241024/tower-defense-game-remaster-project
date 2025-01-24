@@ -42,9 +42,7 @@ const singInHandler = async (socket, payload, sequence) => {
     const token = jwt.sign(id, TOKEN_SECRET_KEY);
 
     // 5. 유저 세션 추가 + DB에서 유저의 최고 기록 불러오기
-    const userSession = addUser(socket, id, user.score, sequence);
-    const highestScore = user.score;
-    userSession.setHighScore(highestScore);
+    const userSession = addUser(socket, id, user.score, user.rating, sequence);
 
     // 6. 로그인 상태 변경
     await updateUserLoginState(id, true);
