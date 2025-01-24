@@ -3,6 +3,7 @@ import { getGameSession } from '../session/game.session.js';
 import { getUserBySocket } from '../session/user.session.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import { createResponse } from '../utils/response/createResponse.js';
+import { updateUserScore, findUserById } from '../db/user/user.db.js';
 import { config } from '../config/config.js';
 
 const monsterDeathHandler = async (socket, payload) => {
@@ -13,6 +14,17 @@ const monsterDeathHandler = async (socket, payload) => {
   // 몬스터 삭제하고 점수 갱신.
     gameSession.removeMonster(payload.monsterId);
     gameId.addScore(config.ingame.score * gameId.getMonsterLevel());
+
+  const user = await findUserById(gameId.id); // 이건 데이터베이스에서의 user
+  const highestScore = user.score;
+  console.log('user', user);
+  console.log('highestScore', highestScore);
+  console.log('score', gameId.score);
+
+  if (gameId.score > highestScore) {
+    await updateUserScore(gameId.score, gameId.id);
+    gameId.setHighScore(gameId.score);
+  }
 
     // 페이로드 직렬화.
     const protoMessages = getProtoMessages();

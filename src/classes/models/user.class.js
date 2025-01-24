@@ -4,6 +4,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
+import { getGameSession } from '../../session/game.session.js';
 
 class User {
   constructor(socket, id, highScore, sequence) {
@@ -65,6 +66,10 @@ class User {
     }
   }
 
+  getScore() {
+    return this.score;
+  }
+
   syncStateNotification() {
     const protoMessages = getProtoMessages();
     const notification = protoMessages.towerDefense.GamePacket;
@@ -89,6 +94,33 @@ class User {
     );
 
     this.socket.write(syncStateNotification);
+  }
+
+  setHighScore(score) {
+    this.highScore = score;
+  }
+
+  getHighScore() {
+    return this.highScore;
+  }
+
+  getOpponent() {
+    const session = getGameSession(this.gameId);
+    const opponentSocket = session.users.keys().find((socket) => socket !== this.socket);
+    const opponent = session.users.get(opponentSocket);
+
+    return opponent;
+  }
+
+  resetUser() {
+    this.baseHp = config.ingame.baseHp;
+    this.score = 0;
+    this.gold = config.ingame.initialGold;
+    this.towers = [];
+    this.monsters = [];
+    this.monsterLevel = 1;
+    this.gameId = null;
+    this.setCurrentRound();
   }
 }
 
