@@ -68,7 +68,8 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     myRate = myRate - 16 * ea;
     opponentRate = opponentRate + 16 * (1 - oa);
     // update elo rating
-    await updateUserRating(myRate, user.id, opponentRate, opponent.id);
+    await updateUserRating(myRate, user.id);
+    await updateUserRating(opponentRate, opponent.id);
     user.rating = myRate;
     opponent.rating = opponentRate;
 
