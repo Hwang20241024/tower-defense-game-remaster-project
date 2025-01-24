@@ -8,7 +8,8 @@ import jwt from 'jsonwebtoken';
 import { TOKEN_SECRET_KEY } from '../../constants/env.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
-import { addUser } from '../../session/user.session.js';
+import { addUser, getUserBySocket } from '../../session/user.session.js';
+import { getSequenceSession, removeSequenceSession } from '../../session/sequence.session.js';
 
 const singInHandler = async (socket, payload, sequence) => {
   const { id, password } = payload;
@@ -40,11 +41,19 @@ const singInHandler = async (socket, payload, sequence) => {
 
     // 4. JWT 토큰 생성
     const token = jwt.sign(id, TOKEN_SECRET_KEY);
+    // 임시 시퀀스 세션에서 시퀀스 유효여부 체크
+    const tempSequence = getSequenceSession(socket);
+    if (sequence !== tempSequence) {
+      throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 시퀀스 입니다.');
+    }
 
     // 5. 유저 세션 추가 + DB에서 유저의 최고 기록 불러오기
     const userSession = addUser(socket, id, user.score, sequence);
     const highestScore = user.score;
     userSession.setHighScore(highestScore);
+
+    // 임시 Sequnce세션에서 삭제
+    removeSequenceSession(socket);
 
     // 6. 로그인 상태 변경
     await updateUserLoginState(id, true);
@@ -67,7 +76,6 @@ const singInHandler = async (socket, payload, sequence) => {
       userSession.getNextSequence(),
       responsePayload,
     );
-
     socket.write(responsePacket);
   } catch (error) {
     handleError(socket, error, PACKET_TYPE.LOGIN_REQUEST);

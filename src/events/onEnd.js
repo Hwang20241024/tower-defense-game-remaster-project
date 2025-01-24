@@ -1,6 +1,7 @@
 import { getAllUserSessions, getUserBySocket, removeUser } from '../session/user.session.js';
 import { getGameSession } from '../session/game.session.js';
 import { updateUserLoginState } from '../db/user/user.db.js';
+import { getSequenceSession, removeSequenceSession } from '../session/sequence.session.js';
 
 export const onEnd = (socket) => async () => {
   console.log('클라이언트 연결이 종료되었습니다. (END)');
@@ -17,7 +18,11 @@ export const onEnd = (socket) => async () => {
     removeUser(socket);
 
     await updateUserLoginState(user.getUserId(), false);
-
-    console.log(getAllUserSessions().size);
+  } else {
+    // 임시 Sequence 세션 확인 후 삭제
+    const sequenceSession = getSequenceSession(socket);
+    if (sequenceSession) {
+      removeSequenceSession(socket);
+    }
   }
 };

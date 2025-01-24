@@ -46,8 +46,19 @@ class User {
     return this.sequence;
   }
 
+  checkSequence(sequence) {
+    if (this.sequence !== sequence) {
+      throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 Sequence 입니다.');
+    }
+  }
+
   getNextSequence() {
-    return ++this.sequence;
+    this.updateNextSequence();
+    return this.sequence;
+  }
+
+  updateNextSequence() {
+    ++this.sequence;
   }
 
   getMonsterLevel() {
@@ -106,7 +117,7 @@ class User {
 
   getOpponent() {
     const session = getGameSession(this.gameId);
-    const opponentSocket = session.users.keys().find((socket) => socket !== this.socket);
+    const opponentSocket = [...session.users.keys()].find((socket) => socket !== this.socket);
     const opponent = session.users.get(opponentSocket);
 
     return opponent;
