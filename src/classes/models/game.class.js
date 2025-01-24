@@ -7,12 +7,14 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
+import IntervalManager from '../managers/interval.manager.js';
 
 class Game {
   constructor() {
     this.users = new Map();
     this.monsterManager = new MonsterManager();
     this.towerManager = new TowerManager();
+    this.intervalManager = new IntervalManager();
     this.id = uuidv4();
   }
 
@@ -51,14 +53,19 @@ class Game {
     return this.users.size;
   }
 
-  // 수정해야합니다. 레벨 
+  // 수정해야합니다. 레벨
   addMonster(level) {
     this.monsterManager.addMonster(this.id, level);
   }
 
   getMonster(monsterId) {
     const findMonsters = this.monsterManager.getMonstersArr();
-    return findMonsters.find((monster) => monster.id === monsterId);
+    return findMonsters.find((monster) => monster.monsterId === monsterId);
+  }
+
+  // 테스트용
+  getMonsters () {
+    return this.monsterManager.getMonstersArr();
   }
 
   removeMonster(monsterId) {
@@ -72,7 +79,7 @@ class Game {
   checkIsTowerOwner(socket, towerId) {
     const tower = this.towerManager.towers.get(towerId);
 
-    if (tower.socket === socket) return true;
+    if (tower.userSocket === socket) return true;
     else return false;
   }
 
@@ -83,12 +90,6 @@ class Game {
         user.getUserSocket().write(packet);
       }
     });
-  }
-
-  // 게임 시작
-  startGame() {
-    // base position 설정
-    // monsterPath 생성
   }
 
   // 매치가 시작되었음을 알림
@@ -104,7 +105,10 @@ class Game {
     const userDatas = new Map();
 
     // 유저 데이터 초기화
-    for(var [socket, user] of this.users){
+    for (var [socket, user] of this.users) {
+      // 유저 상태 동기화 인터벌 추가
+      this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
       var _y = 350;
@@ -120,7 +124,7 @@ class Game {
       const monsterDatas = [];
 
       // 유저 하이스코어 로드
-      const highScore = 0;
+      const highScore = user.highScore;
 
       const userData = {
         gold: config.ingame.initialGold,
@@ -138,7 +142,7 @@ class Game {
           x: 1400,
           y: _y,
         },
-      }
+      };
 
       userDatas.set(user, userData);
     }
@@ -146,13 +150,13 @@ class Game {
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
       try {
-        const protoMessages = getProtoMessages()
+        const protoMessages = getProtoMessages();
         const GamePacket = protoMessages.towerDefense.GamePacket;
 
         // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
         let playerData, opponentData;
-        for(const [key, value] of userDatas){
-          if(key === user) playerData = value;
+        for (const [key, value] of userDatas) {
+          if (key === user) playerData = value;
           else opponentData = value;
         }
 
@@ -161,8 +165,8 @@ class Game {
           matchStartNotification: {
             initialGameState,
             playerData,
-            opponentData
-          }
+            opponentData,
+          },
         };
 
         // 페이로드 검증
@@ -183,21 +187,6 @@ class Game {
       } catch (error) {
         console.log(error);
       }
-    }
-  }
-
-  // 내 상태를 알림
-  stateSyncNotification() {
-    const towerDatas = [];
-    const monsterDatas = [];
-
-    return {
-      userGold: 0,
-      baseHp: 0,
-      monsterLevel: 0,
-      score: 0,
-      TowerData: towerDatas,
-      MonsterData: monsterDatas,
     }
   }
 }

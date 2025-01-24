@@ -1,18 +1,25 @@
-import { createResponse } from '../utils/response/createResponse.js';
-import { PACKET_TYPE } from '../constants/header.js';
-import { getProtoMessages } from '../init/loadProtos.js';
-import { getGameSession } from '../session/game.session.js';
-import { getUserBySocket } from '../session/user.session.js';
+import { createResponse } from '../../utils/response/createResponse.js';
+import { PACKET_TYPE } from '../../constants/header.js';
+import { getProtoMessages } from '../../init/loadProtos.js';
+import { getGameSession } from '../../session/game.session.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 const spawnMonsterHandler = async (socket, payload) => {
   // 게임Id 가져오기.
   const gameId = getUserBySocket(socket);
   const gameSession = getGameSession(gameId.getGameId());
 
+  const user = getUserBySocket(socket);
+  if (!user) {
+    throw new CustomError(ErrorCodes.USER_NOT_FOUND, '유저를 찾을 수 없습니다.');
+  }
+
   // 몬스터 추가
   gameSession.addMonster(gameId.getMonsterLevel());
   // 갱신후 마지막 몬스터를 가져오기
   const monster = gameSession.getLastMonster();
+
+  user.monsters.push(monster);
 
   const protoMessages = getProtoMessages();
 
