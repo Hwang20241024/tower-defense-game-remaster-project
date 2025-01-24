@@ -12,42 +12,34 @@ const monsterDeathHandler = async (socket, payload) => {
   const gameSession = getGameSession(gameId.getGameId());
 
   // 몬스터 삭제하고 점수 갱신.
-    gameSession.removeMonster(payload.monsterId);
-    gameId.addScore(config.ingame.score * gameId.getMonsterLevel());
+  gameSession.removeMonster(payload.monsterId);
+  gameId.addScore(config.ingame.score * gameId.getMonsterLevel());
 
-  const user = await findUserById(gameId.id); // 이건 데이터베이스에서의 user
-  const highestScore = user.score;
-  // console.log('user', user);
-  // console.log('highestScore', highestScore);
-  // console.log('score', gameId.score);
-
-  if (gameId.score > highestScore) {
-    await updateUserScore(gameId.score, gameId.id);
+  if (gameId.score > gameId.getHighScore()) {
     gameId.setHighScore(gameId.score);
   }
 
-    // 페이로드 직렬화.
-    const protoMessages = getProtoMessages();
+  // 페이로드 직렬화.
+  const protoMessages = getProtoMessages();
 
-    const response = protoMessages.towerDefense.GamePacket;
-    const gamePacket = response.create({
-      enemyMonsterDeathNotification: {
-        monsterId: payload.monsterId,
-      },
-    });
+  const response = protoMessages.towerDefense.GamePacket;
+  const gamePacket = response.create({
+    enemyMonsterDeathNotification: {
+      monsterId: payload.monsterId,
+    },
+  });
 
-    const payloadData = response.encode(gamePacket).finish();
+  const payloadData = response.encode(gamePacket).finish();
 
-    // "헤더 + 페이로드" 직렬화.
-    const initialResponse = createResponse(
-      PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
-      gameId.getNextSequence(),
-      payloadData,
-    );
+  // "헤더 + 페이로드" 직렬화.
+  const initialResponse = createResponse(
+    PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
+    gameId.getNextSequence(),
+    payloadData,
+  );
 
-    // 브로드 케스트 추가
-    await gameSession.broadcast(initialResponse, socket);
-
+  // 브로드 케스트 추가
+  await gameSession.broadcast(initialResponse, socket);
 };
 
 export default monsterDeathHandler;

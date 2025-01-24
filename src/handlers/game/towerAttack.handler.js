@@ -32,10 +32,12 @@ export const towerAttackHandler = (socket, payload) => {
   if (!monster) {
     throw new CustomError(ErrorCodes.INVALID_PACKET, '세션에 존재하지 않는 몬스터입니다.');
   }
+  if (monster.getMonsterHp() <= 0) return;
 
-  // 검증을 통과했다면 몬스터의 체력 감소...타워의 데미지는 클라이언트 에셋 거를 config로 정의해둬야 할 듯(직접 확인해보니 40임)
-
-  // monster.hp -= config.ingame.towerPower;
+  // 검증을 통과했다면 몬스터의 체력 감소
+  // 클라이언트 에셋을 확인했더니 일반 타워의 데미지는 40
+  monster.setMonsterHp(-config.ingame.towerPower);
+  // console.log('몬스터 체력 : ', monster.getMonsterHp());
 
   const packet = enemyTowerAttackNotification(payload, socket);
 

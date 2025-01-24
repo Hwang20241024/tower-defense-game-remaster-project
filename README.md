@@ -2,59 +2,126 @@
 
 # 1. Architecture
 
-- (내용)
+![Image Alt Text](images/image1.png)
 
-# 2. Directory (임시)
+# 2. Directory 
 
-## 2-1. server (임시)
+## 2-1. server 
+
+<details>
+ 
 ```
 📦src
  ┣ 📂classes
+ ┃ ┣ 📂managers
+ ┃ ┃ ┣ 📜interval.manager.js
+ ┃ ┃ ┣ 📜monster.manager.js
+ ┃ ┃ ┗ 📜tower.manager.js
+ ┃ ┗ 📂models
+ ┃ ┃ ┣ 📜game.class.js
+ ┃ ┃ ┣ 📜monster.class.js
+ ┃ ┃ ┣ 📜tower.class.js
+ ┃ ┃ ┗ 📜user.class.js
  ┣ 📂config
  ┃ ┗ 📜config.js
  ┣ 📂constants
  ┃ ┣ 📜env.js
- ┃ ┣ 📜handlerIds.js
  ┃ ┗ 📜header.js
  ┣ 📂db
+ ┃ ┣ 📂migration
+ ┃ ┃ ┗ 📜createSchemas.js
+ ┃ ┣ 📂sql
+ ┃ ┃ ┗ 📜user_db.sql
+ ┃ ┣ 📂user
+ ┃ ┃ ┣ 📜user.db.js
+ ┃ ┃ ┗ 📜user.queries.js
+ ┃ ┗ 📜database.js
  ┣ 📂events
  ┃ ┣ 📜onConnection.js
  ┃ ┣ 📜onData.js
  ┃ ┣ 📜onEnd.js
  ┃ ┗ 📜onError.js
  ┣ 📂handlers
+ ┃ ┣ 📂game
+ ┃ ┃ ┣ 📜monsterAttackBase.handler.js
+ ┃ ┃ ┣ 📜monsterDeath.handler.js
+ ┃ ┃ ┣ 📜purchaseTower.handler.js
+ ┃ ┃ ┣ 📜spawnMonster.handler.js
+ ┃ ┃ ┗ 📜towerAttack.handler.js
+ ┃ ┣ 📂title
+ ┃ ┃ ┣ 📜match.handler.js
+ ┃ ┃ ┣ 📜singIn.handler.js
+ ┃ ┃ ┗ 📜singUp.handler.js
  ┃ ┗ 📜index.js
  ┣ 📂init
  ┃ ┣ 📜index.js
  ┃ ┗ 📜loadProtos.js
  ┣ 📂protobuf
+ ┃ ┣ 📜common.proto
  ┃ ┣ 📜packetNames.js
  ┃ ┗ 📜towerDefense.proto
+ ┣ 📂session
+ ┃ ┣ 📜game.session.js
+ ┃ ┣ 📜session.js
+ ┃ ┗ 📜user.session.js
  ┣ 📂utils
  ┃ ┣ 📂db
- ┃ ┗ 📂error
+ ┃ ┃ ┗ 📜testConnection.js
+ ┃ ┣ 📂error
  ┃ ┃ ┣ 📜customError.js
  ┃ ┃ ┣ 📜errorCodes.js
  ┃ ┃ ┗ 📜errorHandler.js
+ ┃ ┣ 📂notification
+ ┃ ┃ ┗ 📜game.notification.js
+ ┃ ┣ 📂parser
+ ┃ ┃ ┗ 📜packetParser.js
+ ┃ ┣ 📂response
+ ┃ ┃ ┗ 📜createResponse.js
+ ┃ ┗ 📜dateFomatter.js
  ┗ 📜server.js
 ```
 
-## 2-2. client
+</details>
 
-- (내용)
+
+## 2-2. Client update
+
+### GameManager.cs (Line 209) - comment
+
+```
+towers.Last().towerId = towerId;
+```
+
+### tower.cs 파일 (Line 43) - Added
+
+```
+if (monster.nowHp <= 0) return;
+```
+### GameManager.cs (Line 133) - Changed
+
+```
+Util.Random(5, roads1.Count - 5);
+```
+
+### GameManager.cs (Line 193) - Changed
+
+```
+var position = roads1[rand].transform.localPosition + new Vector3(0, Util.Random(-100, 100));
+```
 
 # 3. Project Introduction
 
-## 3-1. packet (임시)
-- (내용)
+## 3-1. packet 
 
-## 3-2. algorithm (임시)
-- (내용)
+![Image Alt Text](images/image2.png)
 
-## 3-3. 추가...
+![Image Alt Text](images/image3.png)
 
-# 4. Tech Stack (임시)
-[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,redis,unity&theme=light)](https://skillicons.dev)
+![Image Alt Text](images/image4.png)
+
+
+# 4. Tech Stack
+[![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,unity&theme=light)](https://skillicons.dev)
 
 
 

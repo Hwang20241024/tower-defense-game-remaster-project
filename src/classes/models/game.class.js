@@ -60,7 +60,12 @@ class Game {
 
   getMonster(monsterId) {
     const findMonsters = this.monsterManager.getMonstersArr();
-    return findMonsters.find((monster) => monster.id === monsterId);
+    return findMonsters.find((monster) => monster.monsterId === monsterId);
+  }
+
+  // 테스트용
+  getMonsters () {
+    return this.monsterManager.getMonstersArr();
   }
 
   removeMonster(monsterId) {
@@ -85,12 +90,6 @@ class Game {
         user.getUserSocket().write(packet);
       }
     });
-  }
-
-  // 게임 시작
-  startGame() {
-    // base position 설정
-    // monsterPath 생성
   }
 
   // 매치가 시작되었음을 알림
