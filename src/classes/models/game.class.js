@@ -60,7 +60,12 @@ class Game {
 
   getMonster(monsterId) {
     const findMonsters = this.monsterManager.getMonstersArr();
-    return findMonsters.find((monster) => monster.id === monsterId);
+    return findMonsters.find((monster) => monster.monsterId === monsterId);
+  }
+
+  // 테스트용
+  getMonsters () {
+    return this.monsterManager.getMonstersArr();
   }
 
   removeMonster(monsterId) {
