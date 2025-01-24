@@ -105,8 +105,6 @@ class Game {
 
     const userDatas = new Map();
 
-    console.log('매칭 시작 안내');
-
     // 유저 데이터 초기화
     for (var [socket, user] of this.users) {
       // 유저 상태 동기화 인터벌 추가
@@ -150,8 +148,6 @@ class Game {
       userDatas.set(user, userData);
     }
 
-    console.log('유저 전송 전');
-
     // 게임에 있는 모든 유저에게 데이터 전송
     for (var [socket, user] of this.users) {
       try {
@@ -193,22 +189,6 @@ class Game {
         console.log(error);
       }
     }
-  }
-
-  // 내 상태를 알림
-
-  stateSyncNotification() {
-    const towerDatas = [];
-    const monsterDatas = [];
-
-    return {
-      userGold: 0,
-      baseHp: 0,
-      monsterLevel: 0,
-      score: 0,
-      TowerData: towerDatas,
-      MonsterData: monsterDatas,
-    };
   }
 }
 

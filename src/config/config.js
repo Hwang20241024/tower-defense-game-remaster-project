@@ -35,6 +35,7 @@ export const config = {
     initialGold: 100,
     towerCost: 30,
     monsterInterval: 3,
+    score: 100,
   },
   rounds: [
     { monsterLevel: 1, goal: 1000, gold: 300 },

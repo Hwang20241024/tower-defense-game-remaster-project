@@ -1,5 +1,5 @@
-import { getEnableGameSession } from '../session/game.session.js';
-import { getUserBySocket } from '../session/user.session.js';
+import { getEnableGameSession } from '../../session/game.session.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 // 매치메이킹에 등록하는 핸들러
 export const matchHandler = (socket, payload) => {

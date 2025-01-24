@@ -1,15 +1,14 @@
-import { HANDLER_IDS } from '../constants/handlerIds.js';
 import { PACKET_TYPE } from '../constants/header.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import CustomError from '../utils/error/customError.js';
-import spawnMonsterHandler from './spawnMonster.handler.js';
-import singUpHandler from './singUp.handler.js';
-import singInHandler from './singIn.handler.js';
-import { matchHandler } from './match.handler.js';
+import spawnMonsterHandler from './game/spawnMonster.handler.js';
+import singUpHandler from './title/singUp.handler.js';
+import singInHandler from './title/singIn.handler.js';
+import { matchHandler } from './title/match.handler.js';
 import { monsterAttackBaseHandler } from './game/monsterAttackBase.handler.js';
 import { towerAttackHandler } from './game/towerAttack.handler.js';
 import purchaseTowerHandler from './game/purchaseTower.handler.js';
-import monsterDeathHandler from './monsterDeath.handler.js'
+import monsterDeathHandler from './game/monsterDeath.handler.js'
 
 const handlers = {
   // 다른 핸들러들을 추가

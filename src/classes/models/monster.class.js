@@ -6,11 +6,12 @@
 // 객체로 키값은 monsterId(uuid)로 맵핑한다.
 
 export default class Monster {
-  constructor(monsterId, gameId, monsterNumber, level,) {
+  constructor(monsterId, gameId, monsterNumber, level, hp) {
     this.monsterId = monsterId;
     this.gameId = gameId;
     this.monsterNumber = monsterNumber;
     this.level = level;
+    this.Hp = hp;
   }
   
   getMonsterId() {
@@ -27,6 +28,10 @@ export default class Monster {
 
   getMonsterLevel() {
     return this.level;
+  }
+
+  getMonsterHp() {
+    return this.Hp;
   }
   
 }
