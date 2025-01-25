@@ -2,13 +2,14 @@ import { PACKET_DATA } from '../../constants/header.js';
 import { CLIENT_VERSION } from '../../constants/env.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 
-// 패킷 명세
+// 테스트용 패킷 명세
 // 1. packetType (ushort)     패킷 타입(2바이트)
 // 2. versionLength (ubyte)   버전 길이 (1바이트)
 // 3. version (string)        버전 (문자열)
 // 4. sequence (uint32)       시퀀스 (4바이트)
 // 5. payloadLength (uint32)  데이터 길이 (4바이트)
 // 6. payload (bytes)         실제 데이터
+// 7. timestamp (int64)       레이턴시 측정용도.
 
 export const createResponse = (packetType, sequence, payload, payloadType) => {
   // 패킷 타입 (ushort - 2바이트)
@@ -37,6 +38,11 @@ export const createResponse = (packetType, sequence, payload, payloadType) => {
   const payloadLengthBuffer = Buffer.alloc(PACKET_DATA.PAYLOAD_LENGTH); // 데이터 길이를 4바이트로 설정
   payloadLengthBuffer.writeUInt32BE(payloadData.length, 0); // 페이로드 길이 기록
 
+  // 타임스탬프 (int64 - 8바이트, 밀리초 단위)
+  const timestampBuffer = Buffer.alloc(8); // 8바이트 (int64)
+  const timestamp = BigInt(Date.now()); // 현재 시간을 밀리초 단위로 가져오기
+  timestampBuffer.writeBigInt64BE(timestamp, 0); // 타임스탬프 기록
+
   // 모든 버퍼를 결합하여 최종 패킷 생성
   const completePacket = Buffer.concat([
     packetTypeBuffer, // 패킷 타입
@@ -45,6 +51,7 @@ export const createResponse = (packetType, sequence, payload, payloadType) => {
     sequenceBuffer, // 시권스
     payloadLengthBuffer, // 페이로드 길이
     payloadData, // 실제 데이터
+    timestampBuffer, // 타임스테프
   ]);
 
   return completePacket;
