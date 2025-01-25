@@ -10,7 +10,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 // 5. payloadLength (uint32)  데이터 길이 (4바이트)
 // 6. payload (bytes)         실제 데이터
 
-export const createResponse = (packetType, sequence, payload, payloadType = null) => {
+export const createResponse = (packetType, sequence, payload, payloadType) => {
   // 패킷 타입 (ushort - 2바이트)
   const packetTypeBuffer = Buffer.alloc(PACKET_DATA.PACKET_TYPE_LENGTH);
   packetTypeBuffer.writeUInt16BE(packetType, 0);
@@ -24,14 +24,7 @@ export const createResponse = (packetType, sequence, payload, payloadType = null
   const sequenceBuffer = Buffer.alloc(PACKET_DATA.SEQUENCE_LENGTH);
   sequenceBuffer.writeUInt32BE(sequence, 0);
 
-  // 페이로드 (4 바이트)
-  // const payloadLengthBuffer = Buffer.alloc(PACKET_DATA.PAYLOAD_LENGTH); // 데이터 길이를 4바이트로 설정
-  // payloadLengthBuffer.writeUInt32BE(payload.length, 0); // 페이로드 길이 기록
-
-  // 직렬화.
-  //console.log(payloadType);
-  //console.log(payload);
-
+  // 페이로드 직렬화
   const protoMessages = getProtoMessages();
   const response = protoMessages.towerDefense.GamePacket;
   const data = response.create({
