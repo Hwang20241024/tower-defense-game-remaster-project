@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Form, Input } from 'antd'; // Ant Design에서 제공하는 컴포넌트들 임포트
+import { serverSettingButtonHandler } from '../script/handlers/react/serverSettingButton.handler.js';
 
 // MyFormItemContext를 이용해 중첩된 폼 아이템들을 관리
 const MyFormItemContext = React.createContext([]);
@@ -27,31 +28,30 @@ const MyFormItem = ({ name, ...props }) => {
 
 // Option2Page: 서버 세팅을 위한 폼을 렌더링하는 페이지 컴포넌트
 function Option2Page() {
-  // 폼이 제출되었을 때 호출되는 함수
+  const [form] = Form.useForm(); // Form 인스턴스 관리
+
   const onFinish = (value) => {
     console.log(value); // 폼 데이터를 콘솔에 출력
   };
 
+  const onButtonClick = () => {
+    serverSettingButtonHandler(form);
+  };
+
   return (
     <div>
-      {/* Form 컴포넌트를 사용하여 서버 세팅 폼을 만듦 */}
-      <Form name="form_item_path" layout="vertical" onFinish={onFinish}>
-        {/* 'serverSetting'라는 prefix를 가진 그룹 */}
+      <Form name="form_item_path" layout="vertical" onFinish={onFinish} form={form}>
         <MyFormItemGroup prefix={['serverSetting']}>
-          {/* 서버 IP를 입력받는 폼 항목 */}
-          <MyFormItem name="firstName" label="서버 IP">
+          <MyFormItem name="ip" label="서버 IP">
             <Input />
           </MyFormItem>
-          {/* 서버 Port를 입력받는 폼 항목 */}
-          <MyFormItem name="lastName" label="서버 Port">
+          <MyFormItem name="port" label="서버 Port">
             <Input />
           </MyFormItem>
-          {/* 접속할 클라이언트 수를 입력받는 폼 항목 */}
-          <MyFormItem name="age" label="접속할 클라이언트 수">
+          <MyFormItem name="count" label="접속할 클라이언트 수">
             <Input />
           </MyFormItem>
-          {/* 제출 버튼 */}
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" onClick={onButtonClick}>
             Submit
           </Button>
         </MyFormItemGroup>
