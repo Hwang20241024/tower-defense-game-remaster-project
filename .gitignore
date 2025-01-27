@@ -2,6 +2,8 @@
 node_modules/
 *.log
 .env
+client/
+clientManagerServer/
 
 # IDE
 .idea
