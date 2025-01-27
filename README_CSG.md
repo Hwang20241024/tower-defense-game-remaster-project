@@ -225,6 +225,40 @@ export const towerAttackHandler = (socket, payload) => {
 };
 ```
 
+### checkGameEnd 인터벌 함수
+
+![alt text](images/image7.png)
+
+```js
+async checkGameEnd() {
+	const now = Date.now();
+
+	this.users.forEach(async (user, socket, map) => {
+		const elapsedTime = now - this.getTime();
+		const userHighestScore = user.highScore;
+
+		if (elapsedTime >= 80000) {
+			const winToMe = { isWin: true };
+
+			const winPacketToMe = gameOverNotification(winToMe, socket);
+
+			socket.write(winPacketToMe);
+
+			if (user.score > userHighestScore) {
+				user.setHighScore(user.score);
+				await updateUserScore(user.score, user.id);
+			}
+
+			removeGameSession(this.id); // 게임 세션 삭제
+			this.intervalManager.clearAll(); // 모든 인터벌 제거
+
+			// 유저들의 객체를 초기화
+			user.resetUser();
+		}
+	});
+}
+```
+
 # 4. Tech Stack
 
 [![My Skills](https://skillicons.dev/icons?i=nodejs,mysql,aws,unity&theme=light)](https://skillicons.dev)
