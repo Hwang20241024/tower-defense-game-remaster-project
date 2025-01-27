@@ -1,5 +1,5 @@
 import { config } from '../../config/config.js';
-import { findUserById, updateUserRating, updateUserScore } from '../../db/user/user.db.js';
+import { findUserById, transaction, updateUserRating, updateUserScore } from '../../db/user/user.db.js';
 import { getGameSession, removeGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';
@@ -78,9 +78,16 @@ export async function gameEnd(
   const oa = 1 / (1 + Math.pow(10, (myRate - opponentRate) / 400)); // 상대 기대 승률
   myRate = myRate - 16 * ea;
   opponentRate = opponentRate + 16 * (1 - oa);
-  // update elo rating
-  await updateUserRating(myRate, user.id);
-  await updateUserRating(opponentRate, opponent.id);
+  try {
+    // update elo rating
+    await transaction(async () => {
+      await updateUserRating(myRate, user.id);
+      await updateUserRating(opponentRate, opponent.id);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
   user.rating = myRate;
   opponent.rating = opponentRate;
 
