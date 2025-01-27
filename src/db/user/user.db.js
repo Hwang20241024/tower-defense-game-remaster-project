@@ -25,3 +25,16 @@ export const updateUserScore = async (score, id) => {
 export const updateUserRating = async (rating, id) => {
   await pools.CH5_TEAM.query(SQL_USER_QUERIES.UPDATE_USER_RATING, [rating, id]);
 }
+
+export const transaction = async (callback) => {
+  try{
+    await pools.CH5_TEAM.beginTransaction();
+    await callback();
+    await pools.CH5_TEAM.commit();
+  }catch(error){
+    await pools.CH5_TEAM.rollback();
+    throw error;
+  }finally{
+    pools.CH5_TEAM.releaseConnection();
+  }
+}
