@@ -10,6 +10,7 @@ import { towerAttackHandler } from './game/towerAttack.handler.js';
 import purchaseTowerHandler from './game/purchaseTower.handler.js';
 import monsterDeathHandler from './game/monsterDeath.handler.js'
 
+
 const handlers = {
   // 다른 핸들러들을 추가
   [PACKET_TYPE.SPAWN_MONSTER_REQUEST]: {

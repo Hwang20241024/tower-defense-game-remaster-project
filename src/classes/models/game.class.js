@@ -2,12 +2,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
 import MonsterManager from '../managers/monster.manager.js';
-import { removeGameSession } from '../../session/game.session.js';
+import { getGameSession, removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { decode } from 'jsonwebtoken';
 import IntervalManager from '../managers/interval.manager.js';
+import { gameOverNotification } from '../../utils/notification/game.notification.js';
+import { gameEnd } from '../../handlers/game/monsterAttackBase.handler.js';
+import { updateUserScore } from '../../db/user/user.db.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 class Game {
   constructor() {
@@ -33,18 +37,47 @@ class Game {
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
+      this.time = Date.now();
     }
+  }
+
+  getTime() {
+    return this.time;
   }
 
   getUser(socket) {
     return this.users.get(socket);
   }
 
-  removeUser(socket) {
+  async removeUser(socket) {
     this.users.delete(socket);
 
     if (this.users.size < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
+    }
+    if (this.users.size === 1) {
+      const user = getUserBySocket(socket);
+      const opponent = user.getOpponent();
+      const opponentHighestScore = opponent.highScore;
+
+      // const loseToMe = { isWin: false };
+      const winToOpponent = { isWin: true };
+      // const losePacketToMe = gameOverNotification(loseToMe, socket);
+      const winPacketToOpponent = gameOverNotification(winToOpponent, opponent.socket);
+
+      // socket.write(losePacketToMe);
+      this.broadcast(winPacketToOpponent, socket);
+
+      if (opponent.score > opponentHighestScore) {
+        user.setHighScore(opponent.score);
+        await updateUserScore(opponent.score, opponent.id);
+      }
+
+      removeGameSession(this.id); // 게임 세션 삭제
+      this.intervalManager.clearAll(); // 모든 인터벌 제거
+
+      // 상대방의 객체를 초기화
+      opponent.resetUser();
     }
     if (this.users.size === 0) {
       removeGameSession(this.id);
@@ -64,7 +97,7 @@ class Game {
   }
 
   // 테스트용
-  getMonsters () {
+  getMonsters() {
     return this.monsterManager.getMonstersArr();
   }
 
@@ -93,7 +126,7 @@ class Game {
   }
 
   // 매치가 시작되었음을 알림
-  matchStartNotification() {
+  async matchStartNotification() {
     // 초기 상태 로드
     const initialGameState = {
       baseHp: config.ingame.baseHp,
@@ -106,9 +139,6 @@ class Game {
 
     // 유저 데이터 초기화
     for (var [socket, user] of this.users) {
-      // 유저 상태 동기화 인터벌 추가
-      this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
-
       // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
       const monsterPaths = [];
       var _y = 350;
@@ -175,19 +205,62 @@ class Game {
           throw Error(errMsg);
         }
 
-        // 버퍼 작성 및 전송
-        const message = GamePacket.create(payload);
-        const buffer = GamePacket.encode(message).finish();
         const matchStartNotificationResponse = createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
           user.sequence,
-          buffer,
+          {
+            initialGameState,
+            playerData,
+            opponentData,
+          },
+          'matchStartNotification',
         );
+
         socket.write(matchStartNotificationResponse);
+
+        setTimeout(
+          (user, socket) => {
+            console.log('timeout :', user.id);
+            this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
+          },
+          1000,
+          user,
+          socket,
+        );
       } catch (error) {
         console.log(error);
       }
     }
+    // 게임 종료 인터벌
+    this.intervalManager.checkTime(this.id, this.checkGameEnd.bind(this), 100);
+  }
+
+  async checkGameEnd() {
+    const now = Date.now();
+
+    this.users.forEach(async (user, socket, map) => {
+      const elapsedTime = now - this.getTime();
+      const userHighestScore = user.highScore;
+
+      if (elapsedTime >= 80000) {
+        const winToMe = { isWin: true };
+
+        const winPacketToMe = gameOverNotification(winToMe, socket);
+
+        socket.write(winPacketToMe);
+
+        if (user.score > userHighestScore) {
+          user.setHighScore(user.score);
+          await updateUserScore(user.score, user.id);
+        }
+
+        removeGameSession(this.id); // 게임 세션 삭제
+        this.intervalManager.clearAll(); // 모든 인터벌 제거
+
+        // 유저들의 객체를 초기화
+        user.resetUser();
+      }
+    });
   }
 }
 
