@@ -5,6 +5,7 @@ import { PACKET_TYPE } from '../../constants/header.js';
 import { config } from '../../config/config.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getGameSession } from '../../session/game.session.js';
+import SocketSession from './socket.class.js';
 
 class User extends SocketSession {
   constructor() {

@@ -31,9 +31,7 @@ class Game {
       throw new Error('Game session is full');
     }
 
-    const userSocket = user.getUserSocket();
-
-    this.users.set(userSocket, user);
+    this.users.set(user.id, user);
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
@@ -205,9 +203,9 @@ class Game {
           throw Error(errMsg);
         }
 
-        const matchStartNotificationResponse = createResponse(
+        const matchStartNotificationResponse = user.createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
-          user.sequence,
+          user.getNextSequence,
           {
             initialGameState,
             playerData,
@@ -216,7 +214,7 @@ class Game {
           'matchStartNotification',
         );
 
-        socket.write(matchStartNotificationResponse);
+        sendPacketToMe(matchStartNotificationResponse);
 
         setTimeout(
           (user, socket) => {
