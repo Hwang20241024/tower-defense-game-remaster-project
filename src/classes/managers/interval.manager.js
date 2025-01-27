@@ -15,6 +15,10 @@ class IntervalManager {
     this.intervals.get(playerId).set(type, setInterval(callback, interval));
   }
 
+  checkTime(gameId, callback, interval) {
+    this.addPlayer(gameId, callback, interval, 'checkTime');
+  }
+
   addGame(gameId, callback, interval) {
     this.addPlayer(gameId, callback, interval, 'game');
   }

@@ -9,7 +9,6 @@ import {
   updateBaseHPNotification,
 } from '../../utils/notification/game.notification.js';
 
-// 나와 상대를 가리지 않고 몬스터가 베이스를 공격하면 도착하는 패킷
 export const monsterAttackBaseHandler = async (socket, payload) => {
   // 패킷 파서(혹은 onData)에서 버전 검증
   const { damage } = payload;
@@ -23,6 +22,7 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
   // 유저를 통해 게임 세션 불러오기
   const gameId = user.getGameId();
   const session = getGameSession(gameId);
+  if (!session) return;
 
   user.baseHp -= damage;
   if (user.baseHp <= 0) {
@@ -59,32 +59,46 @@ export const monsterAttackBaseHandler = async (socket, payload) => {
     socket.write(losePacketToMe);
     session.broadcast(winPacketToOpponent, socket);
 
-    // elo rating
-    const myRate = user.rating;
-    const opponentRate = opponent.rating;
-    const ea = 1 / (1 + Math.pow(10, (opponentRate - myRate) / 400)); // 내 기대 승률
-    const oa = 1 / (1 + Math.pow(10, (myRate - opponentRate) / 400)); // 상대 기대 승률
-    myRate = myRate - 16 * ea;
-    opponentRate = opponentRate + 16 * (1 - oa);
-    // update elo rating
-    await updateUserRating(myRate, user.id, opponentRate, opponent.id);
-    user.rating = myRate;
-    opponent.rating = opponentRate;
-
-    // 게임 승패가 결정되는 동시에 게임 종료 작업
-    // DB에 나와 상대방의 최고 기록 저장
-    if (user.score > userHighestScore) {
-      await updateUserScore(user.score, user.id);
-    }
-    if (opponent.score > opponentHighestScore) {
-      await updateUserScore(opponent.score, opponent.id);
-    }
-
-    removeGameSession(gameId); // 게임 세션 삭제
-    session.intervalManager.clearAll(); // 모든 인터벌 제거
-
-    // 나와 상대 유저의 객체를 초기화
-    user.resetUser();
-    opponent.resetUser();
+    gameEnd(userHighestScore, opponentHighestScore, user, opponent, gameId, session);
   }
 };
+
+export async function gameEnd(
+  userHighestScore,
+  opponentHighestScore,
+  user,
+  opponent,
+  gameId,
+  session,
+) {
+  // elo rating
+  let myRate = user.rating;
+  let opponentRate = opponent.rating;
+  const ea = 1 / (1 + Math.pow(10, (opponentRate - myRate) / 400)); // 내 기대 승률
+  const oa = 1 / (1 + Math.pow(10, (myRate - opponentRate) / 400)); // 상대 기대 승률
+  myRate = myRate - 16 * ea;
+  opponentRate = opponentRate + 16 * (1 - oa);
+  // update elo rating
+  await updateUserRating(myRate, user.id);
+  await updateUserRating(opponentRate, opponent.id);
+  user.rating = myRate;
+  opponent.rating = opponentRate;
+
+  // 게임 승패가 결정되는 동시에 게임 종료 작업
+  // DB에 나와 상대방의 최고 기록 저장
+  if (user.score > userHighestScore) {
+    user.setHighScore(user.score);
+    await updateUserScore(user.score, user.id);
+  }
+  if (opponent.score > opponentHighestScore) {
+    opponent.setHighScore(opponent.score);
+    await updateUserScore(opponent.score, opponent.id);
+  }
+
+  removeGameSession(gameId); // 게임 세션 삭제
+  session.intervalManager.clearAll(); // 모든 인터벌 제거
+
+  // 나와 상대 유저의 객체를 초기화
+  user.resetUser();
+  opponent.resetUser();
+}

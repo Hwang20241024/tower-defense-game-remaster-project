@@ -60,19 +60,13 @@ const singUpHandler = async (socket, payload, sequence) => {
     }
 
     // 5. Response 처리
-    const protoMessages = getProtoMessages();
-    const response = protoMessages.towerDefense.GamePacket;
-    const gamePacket = response.create({
-      registerResponse: { success: true, message: '회원가입에 성공하셨습니다.', failCode: 0 },
-    });
-
-    const responsePayload = response.encode(gamePacket).finish();
-
-    const responsePacket = await createResponse(
+    const responsePacket = createResponse(
       PACKET_TYPE.REGISTER_RESPONSE,
-      nextSequence,
-      responsePayload,
+      ++sequence,
+      { success: true, message: '회원가입에 성공하셨습니다.', failCode: 0  },
+      "registerResponse"
     );
+
 
     socket.write(responsePacket);
   } catch (error) {
