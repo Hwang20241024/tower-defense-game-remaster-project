@@ -23,11 +23,29 @@ export const getAllGameSessions = () => {
   return gameSessions;
 };
 
-export const getEnableGameSession = () => {
+export const getEnableGameSession = (rating) => {
   let result = null;
-  gameSessions.forEach((session, key) => {
-    if (session.users.size < config.gameSession.MAX_PLAYERS && result === null) {
-      result = session;
+  
+  let min = Infinity;
+  gameSessions.forEach((session) => {
+    if (session.users.size < config.gameSession.MAX_PLAYERS) {
+      let totalRating = 0;
+      let userCount = 0;
+
+      session.users.forEach((user) => {
+        totalRating += user.rating;
+        userCount++;
+      });
+
+      if (userCount > 0) {
+        const averageRating = totalRating / userCount;
+        const difference = Math.abs(averageRating - rating);
+
+        if (difference < min) {
+          min = difference;
+          result = session;
+        }
+      }
     }
   });
   if (!result) result = addGameSession();

@@ -38,34 +38,36 @@ export const handleError = (socket, error, packetType = null) => {
    * 회원가입, 로그인의 오류 패킷
    */
   if (packetType !== null) {
-    const protoMessages = getProtoMessages();
-    const response = protoMessages.towerDefense.GamePacket;
-    let gamePacket;
-    let responsePacketType;
+    let responsePacket;
     if (PACKET_TYPE.REGISTER_REQUEST === packetType) {
       //회원 가입
-      gamePacket = response.create({
-        registerResponse: {
+      responsePacket = createResponse(
+        PACKET_TYPE.REGISTER_RESPONSE,
+        0, 
+        {
           success: false,
           message: error.message,
           failCode: failCode,
         },
-      });
-      responsePacketType = PACKET_TYPE.REGISTER_RESPONSE;
+        "registerResponse"
+      );
+      
+      socket.write(responsePacket);
     } else if (PACKET_TYPE.LOGIN_REQUEST === packetType) {
       //로그인
-      gamePacket = response.create({
-        loginResponse: {
+      responsePacket = createResponse(
+        PACKET_TYPE.LOGIN_RESPONSE,
+        0, 
+        {
           success: false,
           message: error.message,
           token: null,
           failCode: failCode,
         },
-      });
-      responsePacketType = PACKET_TYPE.LOGIN_RESPONSE;
+        "loginResponse"
+      );
+
+      socket.write(responsePacket);
     }
-    const responsePayload = response.encode(gamePacket).finish();
-    const responsePacket = createResponse(responsePacketType, 0, responsePayload);
-    socket.write(responsePacket);
   }
 };
