@@ -77,6 +77,32 @@ class User extends SocketSession {
     return this.score;
   }
 
+  syncStateNotification() {
+    const protoMessages = getProtoMessages();
+    const notification = protoMessages.towerDefense.GamePacket;
+    const notificationGamePacket = notification.create({
+      stateSyncNotification: {
+        userGold: this.gold,
+        baseHp: this.baseHp,
+        monsterLevel: this.monsterLevel,
+        score: this.score,
+        TowerData: this.towers,
+        MonsterData: this.monsters,
+        message: '상태 동기화 패킷입니다.',
+      },
+    });
+
+    const notificationPayload = notification.encode(notificationGamePacket).finish();
+
+    const syncStateNotification = createResponse(
+      PACKET_TYPE.STATE_SYNC_NOTIFICATION,
+      this.sequence,
+      notificationPayload,
+    );
+
+    this.socket.write(syncStateNotification);
+  }
+
   setHighScore(score) {
     this.highScore = score;
   }
@@ -89,7 +115,6 @@ class User extends SocketSession {
     const session = getGameSession(this.gameId);
     const opponentSocket = [...session.users.keys()].find((socket) => socket !== this.socket);
     const opponent = session.users.get(opponentSocket);
-
     return opponent;
   }
 
