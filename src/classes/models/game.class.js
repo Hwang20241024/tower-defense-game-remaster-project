@@ -11,6 +11,7 @@ import IntervalManager from '../managers/interval.manager.js';
 import { gameOverNotification } from '../../utils/notification/game.notification.js';
 import { gameEnd } from '../../handlers/game/monsterAttackBase.handler.js';
 import { updateUserScore } from '../../db/user/user.db.js';
+import { getUserBySocket } from '../../session/user.session.js';
 
 class Game {
   constructor() {
@@ -48,11 +49,35 @@ class Game {
     return this.users.get(socket);
   }
 
-  removeUser(socket) {
+  async removeUser(socket) {
     this.users.delete(socket);
 
     if (this.users.size < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
+    }
+    if (this.users.size === 1) {
+      const user = getUserBySocket(socket);
+      const opponent = user.getOpponent();
+      const opponentHighestScore = opponent.highScore;
+
+      // const loseToMe = { isWin: false };
+      const winToOpponent = { isWin: true };
+      // const losePacketToMe = gameOverNotification(loseToMe, socket);
+      const winPacketToOpponent = gameOverNotification(winToOpponent, opponent.socket);
+
+      // socket.write(losePacketToMe);
+      this.broadcast(winPacketToOpponent, socket);
+
+      if (opponent.score > opponentHighestScore) {
+        user.setHighScore(opponent.score);
+        await updateUserScore(opponent.score, opponent.id);
+      }
+
+      removeGameSession(this.id); // 게임 세션 삭제
+      this.intervalManager.clearAll(); // 모든 인터벌 제거
+
+      // 상대방의 객체를 초기화
+      opponent.resetUser();
     }
     if (this.users.size === 0) {
       removeGameSession(this.id);
