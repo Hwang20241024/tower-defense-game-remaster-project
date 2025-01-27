@@ -12,134 +12,99 @@ class SocketSession {
   }
 
   // socket.write는 이곳에서만 사용
-  createResponse() {}
+  createResponse(packetType, sequence, payload, payloadType) {
+    // 패킷 타입 (ushort - 2바이트)
+    const packetTypeBuffer = Buffer.alloc(PACKET_DATA.PACKET_TYPE_LENGTH);
+    packetTypeBuffer.writeUInt16BE(packetType, 0);
 
-  sendPacket() {}
+    // 버전 ( 1 바이트)
+    const versionLengthBuffer = Buffer.alloc(PACKET_DATA.VERSION_LENGTH);
+    const versionStringBuffer = Buffer.from(CLIENT_VERSION, 'utf-8'); // 버전 문자열
+    versionLengthBuffer.writeUInt8(versionStringBuffer.length, 0); // 버전 길이 (1바이트)
 
-  syncStateNotification() {
-    // const protoMessages = getProtoMessages();
-    // const notification = protoMessages.towerDefense.GamePacket;
-    // const notificationGamePacket = notification.create({
-    //   stateSyncNotification: {
-    //     userGold: this.gold,
-    //     baseHp: this.baseHp,
-    //     monsterLevel: this.monsterLevel,
-    //     score: this.score,
-    //     TowerData: this.towers,
-    //     MonsterData: this.monsters,
-    //     message: '상태 동기화 패킷입니다.',
-    //   },
-    // });
+    // 시퀀스 (4 바이트)
+    const sequenceBuffer = Buffer.alloc(PACKET_DATA.SEQUENCE_LENGTH);
+    sequenceBuffer.writeUInt32BE(sequence, 0);
 
-    // const notificationPayload = notification.encode(notificationGamePacket).finish();
+    // 페이로드 직렬화
+    const protoMessages = getProtoMessages();
+    const response = protoMessages.towerDefense.GamePacket;
+    const data = response.create({
+      [payloadType]: payload, // 동적으로 oneof 필드 설정
+    });
 
-    const syncStateNotification = createResponse(
-      PACKET_TYPE.STATE_SYNC_NOTIFICATION,
-      this.sequence,
-      notificationPayload,
-    );
+    const payloadData = response.encode(data).finish();
 
-    this.#socket.write(syncStateNotification);
+    // 페이로드 (4 바이트)
+    const payloadLengthBuffer = Buffer.alloc(PACKET_DATA.PAYLOAD_LENGTH); // 데이터 길이를 4바이트로 설정
+    payloadLengthBuffer.writeUInt32BE(payloadData.length, 0); // 페이로드 길이 기록
+
+    // 모든 버퍼를 결합하여 최종 패킷 생성
+    const completePacket = Buffer.concat([
+      packetTypeBuffer, // 패킷 타입
+      versionLengthBuffer, // 버전 길이
+      versionStringBuffer, // 버전 문자열
+      sequenceBuffer, // 시퀀스
+      payloadLengthBuffer, // 페이로드 길이
+      payloadData, // 실제 데이터
+    ]);
+
+    return completePacket;
   }
 
-  // 유저(소켓) 객체를 기준으로 함수 수정하기
-  matchStartNotification() {
-    // 초기 상태 로드
-    const initialGameState = {
-      baseHp: config.ingame.baseHp,
-      towerCost: config.ingame.towerCost,
-      initialGold: config.ingame.initialGold,
-      monsterSpawnInterval: config.ingame.monsterInterval,
-    };
+  sendPacketToMe(response) {
+    this.#socket.write(response);
+  }
 
-    const userDatas = new Map();
-
-    // 유저 데이터 초기화
-    for (var [socket, user] of this.users) {
-      // 몬스터 패스 생성: 가로 간격 50, 세로 간격 -5~5사이로 무작위로 생성하면 될듯?
-      const monsterPaths = [];
-      var _y = 350;
-      for (var i = 0; i < 1400; i += 50) {
-        monsterPaths.push({ x: i, y: _y });
-        _y += -10 + Math.random() * 20; // TODO: 하드코딩된 부분
+  sendPacketToBroadcast(response, session) {
+    session.users.forEach((user) => {
+      if (user.getUserSocket() !== this.#socket) {
+        user.getUserSocket().write(response);
       }
+    });
+  }
 
-      // 타워 데이터 생성
-      const towerDatas = [];
-
-      // 몬스터 데이터 생성
-      const monsterDatas = [];
-
-      // 유저 하이스코어 로드
-      const highScore = user.highScore;
-
-      const userData = {
-        gold: config.ingame.initialGold,
-        base: {
-          hp: config.ingame.baseHp,
-          maxHp: config.ingame.baseHp,
-        },
-        highScore: highScore,
-        towers: towerDatas,
-        monsters: monsterDatas,
-        monsterLevel: 0,
-        score: 0,
-        monsterPath: monsterPaths,
-        basePosition: {
-          x: 1400,
-          y: _y,
-        },
-      };
-
-      userDatas.set(user, userData);
-    }
-
-    // 게임에 있는 모든 유저에게 데이터 전송
-    for (var [socket, user] of this.users) {
-      try {
-        const protoMessages = getProtoMessages();
-        const GamePacket = protoMessages.towerDefense.GamePacket;
-
-        // userDatas에서 key = user인 데이터는 내 데이터, 아니면 상대 데이터
-        let playerData, opponentData;
-        for (const [key, value] of userDatas) {
-          if (key === user) playerData = value;
-          else opponentData = value;
-        }
-
-        // 페이로드 작성
-        const payload = {
-          matchStartNotification: {
-            initialGameState,
-            playerData,
-            opponentData,
-          },
-        };
-
-        // 페이로드 검증
-        const errMsg = GamePacket.verify(payload);
-        if (errMsg) {
-          throw Error(errMsg);
-        }
-
-        // 버퍼 작성 및 전송
-        const message = GamePacket.create(payload);
-        const buffer = GamePacket.encode(message).finish();
-        const matchStartNotificationResponse = createResponse(
-          PACKET_TYPE.MATCH_START_NOTIFICATION,
-          user.sequence,
-          buffer,
-        );
-        this.#socket.write(matchStartNotificationResponse);
-
-        // 유저 상태 동기화 인터벌 추가
-        setTimeout(() => {
-          this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
-        }, 1000);
-      } catch (error) {
-        console.log(error);
-      }
+  checkSequence(sequence) {
+    if (this.sequence !== sequence) {
+      throw new CustomError(ErrorCodes.INVALID_SEQUENCE, '유효하지 않는 Sequence 입니다.');
     }
   }
+
+  // getSequence() {
+  //   return this.sequence;
+  // }
+
+  // getNextSequence() {
+  //   this.updateNextSequence();
+  //   return this.sequence;
+  // }
+
+  // updateNextSequence() {
+  //   ++this.sequence;
+  // }
+
+  // setUserId(id) {
+  //   this.id = id;
+  // }
+
+  // getUserId() {
+  //   return this.id;
+  // }
+
+  // setRating(rating) {
+  //   this.rating = rating;
+  // }
+
+  // getRating() {
+  //   return this.rating;
+  // }
+
+  // setHighScore(highscore) {
+  //   this.highScore = highscore;
+  // }
+
+  // getHighScore() {
+  //   return this.highScore;
+  // }
 }
 export default SocketSession;

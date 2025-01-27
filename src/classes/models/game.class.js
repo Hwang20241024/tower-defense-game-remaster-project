@@ -92,13 +92,13 @@ class Game {
   }
 
   // 상대방한테만 브로드캐스트
-  broadcast(packet, socket) {
-    this.users.forEach((user) => {
-      if (user.getUserSocket() !== socket) {
-        user.getUserSocket().write(packet);
-      }
-    });
-  }
+  // broadcast(packet, socket) {
+  //   this.users.forEach((user) => {
+  //     if (user.getUserSocket() !== socket) {
+  //       user.getUserSocket().write(packet);
+  //     }
+  //   });
+  // }
 
   // 매치가 시작되었음을 알림
   async matchStartNotification() {
@@ -180,7 +180,6 @@ class Game {
           throw Error(errMsg);
         }
 
-        
         const matchStartNotificationResponse = createResponse(
           PACKET_TYPE.MATCH_START_NOTIFICATION,
           user.sequence,
