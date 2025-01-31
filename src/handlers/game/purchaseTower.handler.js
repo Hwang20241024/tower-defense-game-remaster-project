@@ -5,7 +5,6 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { config } from '../../config/config.js';
 
 const purchaseTowerHandler = async (socket, payload) => {

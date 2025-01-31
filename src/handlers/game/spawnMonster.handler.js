@@ -1,6 +1,5 @@
 import { createResponse } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';

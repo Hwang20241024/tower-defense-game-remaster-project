@@ -1,9 +1,7 @@
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
-import { updateUserScore, findUserById } from '../../db/user/user.db.js';
 import { config } from '../../config/config.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
