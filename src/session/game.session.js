@@ -25,7 +25,7 @@ export const getAllGameSessions = () => {
 
 export const getEnableGameSession = (rating) => {
   let result = null;
-  
+
   let min = Infinity;
   gameSessions.forEach((session) => {
     if (session.users.size < config.gameSession.MAX_PLAYERS) {

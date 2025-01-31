@@ -1,11 +1,6 @@
 import { createResponse } from '../response/createResponse.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import {
-  setSequenceSession,
-  getSequenceSession,
-  getAllSequenceSessions,
-} from '../../session/sequence.session.js';
+import { setSequenceSession, getSequenceSession } from '../../session/sequence.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 
 export const handleError = (socket, error, packetType = null) => {
@@ -43,28 +38,28 @@ export const handleError = (socket, error, packetType = null) => {
       //회원 가입
       responsePacket = createResponse(
         PACKET_TYPE.REGISTER_RESPONSE,
-        0, 
+        0,
         {
           success: false,
           message: error.message,
           failCode: failCode,
         },
-        "registerResponse"
+        'registerResponse',
       );
-      
+
       socket.write(responsePacket);
     } else if (PACKET_TYPE.LOGIN_REQUEST === packetType) {
       //로그인
       responsePacket = createResponse(
         PACKET_TYPE.LOGIN_RESPONSE,
-        0, 
+        0,
         {
           success: false,
           message: error.message,
           token: null,
           failCode: failCode,
         },
-        "loginResponse"
+        'loginResponse',
       );
 
       socket.write(responsePacket);

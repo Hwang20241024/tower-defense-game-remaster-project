@@ -35,7 +35,6 @@ export const packetParser = (socket, data) => {
   const payloadLength = socket.buffer.readUInt32BE(offset);
   offset += config.packet.payLoadLength; // 4
 
-
   // payloadLength와 MSS를 비교 (페이로드 길이 검증.)
   if (payloadLength > MSS) {
     console.log('페이로드 사이즈가 넘었습니다. ');
@@ -71,7 +70,7 @@ export const packetParser = (socket, data) => {
 
   for (let key in payload) {
     if (payload.hasOwnProperty(key) && typeof payload[key] === 'object') {
-      return { packetType, sequence, payload: payload[key], offset: offset};
+      return { packetType, sequence, payload: payload[key], offset: offset };
     }
   }
 };
