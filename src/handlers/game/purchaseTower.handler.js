@@ -37,18 +37,17 @@ const purchaseTowerHandler = async (socket, payload) => {
       PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
       user.sequence,
       { towerId: towerId, message: '타워가 생성되었습니다.' },
-      "towerPurchaseResponse"
+      'towerPurchaseResponse',
     );
-  
+
     socket.write(towerPurchaseResponse);
 
     const addEnemyTowerNotification = createResponse(
       PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
       user.sequence,
       { towerId, x, y },
-      "addEnemyTowerNotification"
+      'addEnemyTowerNotification',
     );
-  
 
     game.broadcast(addEnemyTowerNotification, socket);
   } catch (error) {

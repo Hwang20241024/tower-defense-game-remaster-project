@@ -1,4 +1,4 @@
-import {transaction, updateUserRating, updateUserScore } from '../../db/user/user.db.js';
+import { transaction, updateUserRating, updateUserScore } from '../../db/user/user.db.js';
 import { getGameSession, removeGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import CustomError from '../../utils/error/customError.js';

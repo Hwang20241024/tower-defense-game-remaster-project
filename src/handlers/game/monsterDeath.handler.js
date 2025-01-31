@@ -23,8 +23,8 @@ const monsterDeathHandler = async (socket, payload) => {
   const initialResponse = createResponse(
     PACKET_TYPE.ENEMY_MONSTER_DEATH_NOTIFICATION,
     gameId.sequence,
-    { monsterId: payload.monsterId, },
-    "enemyMonsterDeathNotification"
+    { monsterId: payload.monsterId },
+    'enemyMonsterDeathNotification',
   );
 
   // 브로드 케스트 추가
