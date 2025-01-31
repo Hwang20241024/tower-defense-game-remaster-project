@@ -3,12 +3,11 @@ import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import bcrypt from 'bcrypt';
 import { createResponse } from '../../utils/response/createResponse.js';
-import { PACKET_DATA, PACKET_TYPE } from '../../constants/header.js';
+import { PACKET_TYPE } from '../../constants/header.js';
 import jwt from 'jsonwebtoken';
 import { TOKEN_SECRET_KEY } from '../../constants/env.js';
 import { handleError } from '../../utils/error/errorHandler.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
-import { addUser, getUserBySocket } from '../../session/user.session.js';
+import { addUser } from '../../session/user.session.js';
 import { getSequenceSession, removeSequenceSession } from '../../session/sequence.session.js';
 
 const singInHandler = async (socket, payload, sequence) => {
@@ -60,8 +59,8 @@ const singInHandler = async (socket, payload, sequence) => {
     const responsePacket = createResponse(
       PACKET_TYPE.LOGIN_RESPONSE,
       userSession.getNextSequence(),
-      {  success: true, message: '로그인 성공', token: token,  failCode: 0,  },
-      "loginResponse"
+      { success: true, message: '로그인 성공', token: token, failCode: 0 },
+      'loginResponse',
     );
 
     socket.write(responsePacket);

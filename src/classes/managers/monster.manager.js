@@ -1,7 +1,8 @@
 import Monster from '../models/monster.class.js';
 
-const MONSTER_HP = 100;
+const MONSTER_HP = 100; // 몬스터 체력
 const monsterHpPerLv = {
+  // 몬스터 종류별 레벨당 체력 증가량
   mon00001: 10,
   mon00002: 15,
   mon00003: 10,
@@ -11,10 +12,11 @@ const monsterHpPerLv = {
 
 export default class MonsterManager {
   constructor() {
-    this.curId = 1;
+    this.curId = 1; // 몬스터 고유 번호
     this.monsters = new Map();
   }
 
+  // 몬스터 추가
   addMonster(gameId, level) {
     const id = this.curId;
     this.curId += 1;

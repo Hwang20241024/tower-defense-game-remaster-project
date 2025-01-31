@@ -23,6 +23,7 @@ class IntervalManager {
     this.addPlayer(gameId, callback, interval, 'game');
   }
 
+  // 플레이어 삭제
   removePlayer(playerId) {
     if (this.intervals.has(playerId)) {
       const userIntervals = this.intervals.get(playerId);
@@ -31,6 +32,7 @@ class IntervalManager {
     }
   }
 
+  // 인터벌 삭제
   removeInterval(playerId, type) {
     if (this.intervals.has(playerId)) {
       const userIntervals = this.intervals.get(playerId);
@@ -41,6 +43,7 @@ class IntervalManager {
     }
   }
 
+  // 인터벌 매니저의 인터벌 전체 삭제
   clearAll() {
     this.intervals.forEach((userIntervals) => {
       userIntervals.forEach((intervalId) => clearInterval(intervalId));

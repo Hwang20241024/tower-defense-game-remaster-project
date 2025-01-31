@@ -5,7 +5,6 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { getGameSession } from '../../session/game.session.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { config } from '../../config/config.js';
 
 const purchaseTowerHandler = async (socket, payload) => {
@@ -38,18 +37,17 @@ const purchaseTowerHandler = async (socket, payload) => {
       PACKET_TYPE.TOWER_PURCHASE_RESPONSE,
       user.sequence,
       { towerId: towerId, message: '타워가 생성되었습니다.' },
-      "towerPurchaseResponse"
+      'towerPurchaseResponse',
     );
-  
+
     socket.write(towerPurchaseResponse);
 
     const addEnemyTowerNotification = createResponse(
       PACKET_TYPE.ADD_ENEMY_TOWER_NOTIFICATION,
       user.sequence,
       { towerId, x, y },
-      "addEnemyTowerNotification"
+      'addEnemyTowerNotification',
     );
-  
 
     game.broadcast(addEnemyTowerNotification, socket);
   } catch (error) {

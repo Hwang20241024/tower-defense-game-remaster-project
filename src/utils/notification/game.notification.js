@@ -1,4 +1,3 @@
-import { CLIENT_VERSION } from '../../constants/env.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
 import { getUserBySocket } from '../../session/user.session.js';
@@ -39,10 +38,8 @@ export const enemyTowerAttackNotification = (data, socket) => {
     PACKET_TYPE.ENEMY_TOWER_ATTACK_NOTIFICATION,
     user.sequence,
     data,
-    "enemyTowerAttackNotification"
-  )
-
-
+    'enemyTowerAttackNotification',
+  );
 };
 
 export const updateBaseHPNotification = (data, socket) => {
@@ -57,8 +54,8 @@ export const updateBaseHPNotification = (data, socket) => {
     PACKET_TYPE.UPDATE_BASE_HP_NOTIFICATION,
     user.sequence,
     data,
-    "updateBaseHpNotification"
-  )
+    'updateBaseHpNotification',
+  );
 };
 
 export const gameOverNotification = (data, socket) => {
@@ -73,6 +70,6 @@ export const gameOverNotification = (data, socket) => {
     PACKET_TYPE.GAME_OVER_NOTIFICATION,
     user.sequence,
     data,
-    "gameOverNotification"
-  )
+    'gameOverNotification',
+  );
 };

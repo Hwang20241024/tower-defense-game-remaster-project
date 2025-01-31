@@ -4,7 +4,6 @@ import { createResponse } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import CustomError from '../../utils/error/customError.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { handleError } from '../../utils/error/errorHandler.js';
 import { setSequenceSession, getSequenceSession } from '../../session/sequence.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
