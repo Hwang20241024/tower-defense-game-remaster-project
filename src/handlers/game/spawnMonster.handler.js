@@ -1,6 +1,5 @@
 import { createResponse } from '../../utils/response/createResponse.js';
 import { PACKET_TYPE } from '../../constants/header.js';
-import { getProtoMessages } from '../../init/loadProtos.js';
 import { getGameSession } from '../../session/game.session.js';
 import { getUserBySocket } from '../../session/user.session.js';
 import { ErrorCodes } from '../../utils/error/errorCodes.js';
@@ -27,25 +26,24 @@ const spawnMonsterHandler = async (socket, payload) => {
   const payloadData = {
     monsterId: monster.monsterId,
     monsterNumber: monster.monsterNumber,
-  }
-  
+  };
+
   // "헤더 + 페이로드" 직렬화.
   const initialResponse = createResponse(
     PACKET_TYPE.SPAWN_MONSTER_RESPONSE,
     gameId.getNextSequence(),
     payloadData,
-    "spawnMonsterResponse"
+    'spawnMonsterResponse',
   );
 
   await socket.write(initialResponse);
-
 
   // 브로드 캐스트 (동기화)
   const initialResponse2 = createResponse(
     PACKET_TYPE.SPAWN_ENEMY_MONSTER_NOTIFICATION,
     gameId.getNextSequence(),
     payloadData,
-    "spawnEnemyMonsterNotification"
+    'spawnEnemyMonsterNotification',
   );
   await gameSession.broadcast(initialResponse2, socket);
 };

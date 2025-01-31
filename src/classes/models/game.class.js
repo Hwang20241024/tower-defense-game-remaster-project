@@ -2,14 +2,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from '../../config/config.js';
 import TowerManager from '../managers/tower.manager.js';
 import MonsterManager from '../managers/monster.manager.js';
-import { getGameSession, removeGameSession } from '../../session/game.session.js';
+import { removeGameSession } from '../../session/game.session.js';
 import { PACKET_TYPE } from '../../constants/header.js';
 import { createResponse } from '../../utils/response/createResponse.js';
 import { getProtoMessages } from '../../init/loadProtos.js';
-import { decode } from 'jsonwebtoken';
 import IntervalManager from '../managers/interval.manager.js';
 import { gameOverNotification } from '../../utils/notification/game.notification.js';
-import { gameEnd } from '../../handlers/game/monsterAttackBase.handler.js';
 import { updateUserScore } from '../../db/user/user.db.js';
 import { getUserBySocket } from '../../session/user.session.js';
 
@@ -28,16 +26,18 @@ class Game {
 
   addUser(user) {
     if (this.users.size >= config.gameSession.MAX_PLAYERS) {
+      // 방 정원 체크
       throw new Error('Game session is full');
     }
 
     const userSocket = user.getUserSocket();
 
-    this.users.set(userSocket, user);
+    this.users.set(userSocket, user); // 소켓을 key로 유저 저장
 
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
+      // 최대 정원이면 게임 시작
       this.matchStartNotification();
-      this.time = Date.now();
+      this.time = Date.now(); // 게임 시작시간 저장
     }
   }
 
@@ -50,9 +50,10 @@ class Game {
   }
 
   async removeUser(socket) {
-    this.users.delete(socket);
+    this.users.delete(socket); // 유저 map에서 삭제
 
     if (this.users.size < config.gameSession.MAX_PLAYERS) {
+      // 게임 상태 변경
       this.state = 'waiting';
     }
     if (this.users.size === 1) {
@@ -60,12 +61,9 @@ class Game {
       const opponent = user.getOpponent();
       const opponentHighestScore = opponent.highScore;
 
-      // const loseToMe = { isWin: false };
       const winToOpponent = { isWin: true };
-      // const losePacketToMe = gameOverNotification(loseToMe, socket);
       const winPacketToOpponent = gameOverNotification(winToOpponent, opponent.socket);
 
-      // socket.write(losePacketToMe);
       this.broadcast(winPacketToOpponent, socket);
 
       if (opponent.score > opponentHighestScore) {
@@ -218,9 +216,9 @@ class Game {
 
         socket.write(matchStartNotificationResponse);
 
+        // 상태 동기화 인터벌 추가
         setTimeout(
           (user, socket) => {
-            console.log('timeout :', user.id);
             this.intervalManager.addPlayer(socket, user.syncStateNotification.bind(user), 100);
           },
           1000,
@@ -235,6 +233,7 @@ class Game {
     this.intervalManager.checkTime(this.id, this.checkGameEnd.bind(this), 100);
   }
 
+  // 게임 종료 시기 체크 함수
   async checkGameEnd() {
     const now = Date.now();
 
