@@ -25,8 +25,6 @@ export const getAllGameSessions = () => {
 
 export const getEnableGameSession = (rating) => {
   let result = null;
-  
-  let min = Infinity;
   gameSessions.forEach((session) => {
     if (session.users.size < config.gameSession.MAX_PLAYERS) {
       let totalRating = 0;
@@ -41,9 +39,9 @@ export const getEnableGameSession = (rating) => {
         const averageRating = totalRating / userCount;
         const difference = Math.abs(averageRating - rating);
 
-        if (difference < min) {
-          min = difference;
+        if (difference < config.gameSession.MMR_DIFF) {
           result = session;
+          return result;
         }
       }
     }
