@@ -27,22 +27,10 @@ export const getEnableGameSession = (rating) => {
   let result = null;
   gameSessions.forEach((session) => {
     if (session.users.size < config.gameSession.MAX_PLAYERS) {
-      let totalRating = 0;
-      let userCount = 0;
-
-      session.users.forEach((user) => {
-        totalRating += user.rating;
-        userCount++;
-      });
-
-      if (userCount > 0) {
-        const averageRating = totalRating / userCount;
-        const difference = Math.abs(averageRating - rating);
-
-        if (difference < config.gameSession.MMR_DIFF) {
-          result = session;
-          return result;
-        }
+      const difference = Math.abs(session.mmr - rating);
+      if (difference < config.gameSession.MMR_DIFF) {
+        result = session;
+        return result;
       }
     }
   });

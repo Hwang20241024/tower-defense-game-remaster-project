@@ -35,6 +35,13 @@ class Game {
 
     this.users.set(userSocket, user);
 
+    // 평균mmr 계산
+    if (!this.mmr) {
+      this.totalmmr = 0;
+    }
+    this.totalmmr += user.rating;
+    this.mmr = this.totalmmr / this.users.size;
+
     if (this.users.size === config.gameSession.MAX_PLAYERS) {
       this.matchStartNotification();
       this.time = Date.now();
@@ -52,11 +59,15 @@ class Game {
   async removeUser(socket) {
     this.users.delete(socket);
 
+    // 평균mmr 계산
+    const user = getUserBySocket(socket);
+    this.totalmmr -= user.rating;
+    this.mmr = this.totalmmr / this.users.size;
+
     if (this.users.size < config.gameSession.MAX_PLAYERS) {
       this.state = 'waiting';
     }
     if (this.users.size === 1) {
-      const user = getUserBySocket(socket);
       const opponent = user.getOpponent();
       const opponentHighestScore = opponent.highScore;
 
